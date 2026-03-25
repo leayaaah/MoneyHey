@@ -11,6 +11,10 @@ const Header = ({ onToggleSidebar, onLogout, user = { name: 'Nguyễn Văn A', e
         .map(w => w[0])
         .join('')
         .toUpperCase();
+    const handleLogout = () => {
+        
+        console.log('User logged out');
+    }
 
     return (
         <header className="dashboard-header d-flex align-items-center px-3 px-md-4">
@@ -88,7 +92,7 @@ const Header = ({ onToggleSidebar, onLogout, user = { name: 'Nguyễn Văn A', e
                             <hr className="my-1" />
                             <button
                                 className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
-                                onClick={() => { setShowUserMenu(false); onLogout?.(); }}
+                                onClick={() => { setShowUserMenu(false); onLogout && onLogout(); }}
                             >
                                 <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>logout</span>
                                 Đăng xuất

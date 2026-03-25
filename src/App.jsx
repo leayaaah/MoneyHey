@@ -15,7 +15,8 @@ function App() {
 
   return (
     <>
-      {page === 'login'
+      {
+      page === 'login'
         ? <Login
             onLoginSuccess={() => setIsLoggedIn(true)}
             onNavigateToRegister={() => setPage('register')}
