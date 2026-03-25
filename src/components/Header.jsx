@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../css/Header.css';
 
-const Header = ({ onToggleSidebar, user = { name: 'Nguyễn Văn A', email: 'user@moneyhey.vn', avatar: null } }) => {
+const Header = ({ onToggleSidebar, onLogout, user = { name: 'Nguyễn Văn A', email: 'user@moneyhey.vn', avatar: null } }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [notifCount] = useState(3);
 
@@ -86,10 +86,13 @@ const Header = ({ onToggleSidebar, user = { name: 'Nguyễn Văn A', email: 'use
                                 Cài đặt
                             </a>
                             <hr className="my-1" />
-                            <a href="#logout" className="dropdown-item small py-2 text-danger">
+                            <button
+                                className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
+                                onClick={() => { setShowUserMenu(false); onLogout?.(); }}
+                            >
                                 <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>logout</span>
                                 Đăng xuất
-                            </a>
+                            </button>
                         </div>
                     )}
                 </div>

@@ -200,7 +200,7 @@ const QuickActions = () => (
 );
 
 /* ─── Dashboard page ──────────────────────────────────────── */
-const Dashboard = () => {
+const Dashboard = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeNav, setActiveNav] = useState('dashboard');
 
@@ -210,7 +210,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-shell">
-            <Header onToggleSidebar={() => setSidebarOpen(v => !v)} />
+            <Header onToggleSidebar={() => setSidebarOpen(v => !v)} onLogout={onLogout} />
 
             <div className="dashboard-body">
                 <Sidebar open={sidebarOpen} activeNav={activeNav} onNav={setActiveNav} />
