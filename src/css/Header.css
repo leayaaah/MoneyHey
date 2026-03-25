@@ -104,11 +104,12 @@
     overflow: hidden;
 }
 
+
 .user-dropdown .dropdown-item {
+    margin-left: 20px;
     display: flex;
     align-items: center;
     color: var(--text-main);
-    transition: background 0.15s;
 }
 
 .user-dropdown .dropdown-item:hover {
