@@ -61,6 +61,9 @@ const LoginForm = ({ onLoginSuccess }) => {
             }
         } else {
             console.log("Đăng nhập thành công!", authData);
+            if (formData.rememberMe) {
+                localStorage.setItem('moneyhey_session', JSON.stringify(authData.session));
+            }
             onLoginSuccess();
         }
     };
