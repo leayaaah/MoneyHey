@@ -188,7 +188,7 @@ const QuickActions = () => (
         <div className="dash-card-header">
             <h6 className="dash-card-title">Thao tác nhanh</h6>
         </div>
-        <div className="d-flex gap-2 mt-3 flex-wrap">
+        <div className="d-flex gap-2 mt-3 d-flex justify-content-center flex-wrap">
             {QUICK_ACTIONS.map(action => (
                 <button key={action.label} className="quick-action-btn" style={{ '--qa-color': action.color }}>
                     <span className="material-symbols-outlined">{action.icon}</span>

@@ -125,7 +125,8 @@
 
 /* ─── Summary cards grid ──────────────────────────────────── */
 .summary-grid {
-    display: grid;
+    display: flex;
+    justify-content: space-between;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1rem;
     margin-bottom: 1rem;
@@ -133,9 +134,11 @@
 
 .summary-card {
     background: white;
+    width: 25%;
     border-radius: 1rem;
     padding: 1.25rem;
     display: flex;
+    
     align-items: flex-start;
     gap: 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -291,7 +294,9 @@
 
 /* ─── Quick action buttons ────────────────────────────────── */
 .quick-action-btn {
+    width: 100%;
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
