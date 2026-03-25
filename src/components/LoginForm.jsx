@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/LoginForm.css'; // Chỉ import CSS của Form
+import { supabase } from '../services/supabase';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
@@ -7,6 +8,9 @@ const LoginForm = ({ onLoginSuccess }) => {
         password: '',
         rememberMe: false
     });
+    const [errors, setErrors] = useState({});
+
+    
 
     const emailInputRef = useRef(null);
 
@@ -22,13 +26,44 @@ const LoginForm = ({ onLoginSuccess }) => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+        setErrors(prev => ({ ...prev, [name]: '' }));
+    };
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.email.trim()) newErrors.email = 'Vui lòng nhập email';
+        if (!formData.password) newErrors.password = 'Vui lòng nhập mật khẩu';
+        return newErrors;
+    };
+    const focusPasswordInput = () => {
+        const passwordInput = document.querySelector('input[name="password"]');
+        if (passwordInput) {
+            passwordInput.focus();
+        }
     };
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (onLoginSuccess) onLoginSuccess();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        const {data : authData, error : authError} = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password
+        }); 
+        if (authError) {
+            console.error("Lỗi rồi:", authError.message);
+            if (authError.status === 400) {
+                setErrors({ password: 'Email hoặc mật khẩu không đúng' });
+                focusPasswordInput();
+            }
+        } else {
+            console.log("Đăng nhập thành công!", authData);
+            onLoginSuccess();
+        }
     };
-
     return (
         <div className="p-4 p-md-5 w-100" style={{ maxWidth: '440px', margin: '0 auto' }}>
             <div className="mb-5">
@@ -42,24 +77,25 @@ const LoginForm = ({ onLoginSuccess }) => {
                         type="text" 
                         name="email"
                         ref={emailInputRef}
-                        className="form-control form-control-custom" 
+                        className= {`form-control form-control-custom ${errors.email ? 'is-invalid' : ''}`}
                         placeholder="Nhập email"
                         value={formData.email}
                         onChange={handleChange}
                     />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div> }
                 </div>
                 <div>
                     <label className="form-label small fw-bold text-muted px-1">Mật khẩu</label>
                     <input 
                         type="password" 
                         name="password"
-                        className="form-control form-control-custom" 
+                        className= {`form-control form-control-custom ${errors.password ? 'is-invalid' : ''}`}
                         placeholder="Nhập mật khẩu"
                         value={formData.password}
                         onChange={handleChange}
                     />
-                </div>
-                
+                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                </div>                
                 <div className="d-flex justify-content-between align-items-center small">
                     <div className="form-check">
                         <input 

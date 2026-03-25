@@ -132,6 +132,7 @@
     margin-bottom: 1rem;
 }
 
+
 .summary-card {
     background: white;
     width: 25%;
@@ -321,4 +322,14 @@
     border-color: var(--qa-color, var(--emerald-primary));
     background: color-mix(in srgb, var(--qa-color, var(--emerald-primary)) 5%, white);
     transform: translateY(-1px);
+}
+
+@media screen and (max-width: 767px) {
+    .summary-grid {
+        flex-direction: column;
+    }
+    .summary-card {
+        width: 100%;
+    }
+    
 }

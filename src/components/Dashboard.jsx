@@ -1,45 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import '../css/Dashboard.css';
+import {supabase} from "../services/supabase"
 
-/* ─── Sample data ─────────────────────────────────────────── */
 const SUMMARY_CARDS = [
-    {
-        id: 'balance',
-        label: 'Tổng số dư',
-        value: '42.500.000 ₫',
-        change: '+2.3%',
-        positive: true,
-        icon: 'account_balance_wallet',
-        color: 'card-emerald',
-    },
-    {
-        id: 'income',
-        label: 'Thu nhập tháng này',
-        value: '15.000.000 ₫',
-        change: '+5.1%',
-        positive: true,
-        icon: 'trending_up',
-        color: 'card-blue',
-    },
-    {
-        id: 'expense',
-        label: 'Chi tiêu tháng này',
-        value: '8.350.000 ₫',
-        change: '-1.2%',
-        positive: false,
-        icon: 'trending_down',
-        color: 'card-red',
-    },
-    {
-        id: 'savings',
-        label: 'Tiết kiệm',
-        value: '6.650.000 ₫',
-        change: '+12.8%',
-        positive: true,
-        icon: 'savings',
-        color: 'card-amber',
-    },
+    // {
+    //     id: 'balance',
+    //     label: 'Tổng số dư',
+    //     value: '42.500.000 ₫',
+    //     change: '+2.3%',
+    //     positive: true,
+    //     icon: 'account_balance_wallet',
+    //     color: 'card-emerald',
+    // },
+    // {
+    //     id: 'income',
+    //     label: 'Thu nhập tháng này',
+    //     value: '15.000.000 ₫',
+    //     change: '+5.1%',
+    //     positive: true,
+    //     icon: 'trending_up',
+    //     color: 'card-blue',
+    // },
+    // {
+    //     id: 'expense',
+    //     label: 'Chi tiêu tháng này',
+    //     value: '8.350.000 ₫',
+    //     change: '-1.2%',
+    //     positive: false,
+    //     icon: 'trending_down',
+    //     color: 'card-red',
+    // },
+    // {
+    //     id: 'savings',
+    //     label: 'Tiết kiệm',
+    //     value: '6.650.000 ₫',
+    //     change: '+12.8%',
+    //     positive: true,
+    //     icon: 'savings',
+    //     color: 'card-amber',
+    // },
 ];
 
 const TRANSACTIONS = [
@@ -199,14 +199,34 @@ const QuickActions = () => (
     </div>
 );
 
-/* ─── Dashboard page ──────────────────────────────────────── */
 const Dashboard = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeNav, setActiveNav] = useState('dashboard');
+    const [totalBalance, setTotalBalance] = useState(0);
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+    useEffect(() => {
+      const fetchBalance = async() =>{
+        try {
+            const { data: wallets, error } = await supabase
+                .from('wallets')
+                .select('balance');
+            if (error) {
+                console.error("lỗi:", error.message);
+                return;
+            }
+            const total = wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0);
+            setTotalBalance(total);
+            } catch (err) {
+            console.error("Lỗi mạng lưới:", err);
+        }
+      };
+      fetchBalance();
+      
+    }, [])
+    
 
     return (
         <div className="dashboard-shell">
