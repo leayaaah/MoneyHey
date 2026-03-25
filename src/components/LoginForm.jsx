@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/LoginForm.css'; // Chỉ import CSS của Form
 
-const LoginForm = () => {
+const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -26,7 +26,7 @@ const LoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(`${formData.email}`);
+        if (onLoginSuccess) onLoginSuccess();
     };
 
     return (

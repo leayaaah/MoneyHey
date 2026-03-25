@@ -1,13 +1,13 @@
 import React from 'react';
-import Header from './Header';
+import LoginHeader from './LoginHeader';
 import LoginForm from './LoginForm';
 import Footer from './Footer';
 import '../css/Login.css';
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
     return (
         <div className="min-vh-100 d-flex flex-column">
-            <Header />
+            <LoginHeader />
             
             <main className="flex-grow-1 d-flex align-items-center justify-content-center p-3 pt-5 mt-4">
                 <div className="container-fluid" style={{ maxWidth: '1200px' }}>
@@ -18,7 +18,7 @@ const Login = () => {
                                 
 
                                 <div className="col-md-6 d-flex align-items-center bg-white">
-                                    <LoginForm />
+                                    <LoginForm onLoginSuccess={onLoginSuccess} />
                                 </div>
 
                                 <div className="col-md-6 emerald-gradient d-none d-md-flex flex-column justify-content-center align-items-center text-center p-5 position-relative text-white">

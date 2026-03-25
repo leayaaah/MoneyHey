@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import Login from './components/Login'
+import Dashboard from './components/Dashboard'
 
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   return (
     <>
-      <Login/>
+      {isLoggedIn
+        ? <Dashboard />
+        : <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+      }
     </>
   )
 }
