@@ -3,7 +3,6 @@ import '../css/RegisterForm.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
-        fullName: '',
         email: '',
         password: '',
         confirmPassword: ''
@@ -11,11 +10,11 @@ const RegisterForm = () => {
 
     const [errors, setErrors] = useState({});
 
-    const fullNameInputRef = useRef(null);
+    const emailInputRef = useRef(null);
 
     useEffect(() => {
-        if (fullNameInputRef.current) {
-            fullNameInputRef.current.focus();
+        if (emailInputRef.current) {
+            emailInputRef.current.focus();
         }
     }, []);
 
@@ -29,7 +28,6 @@ const RegisterForm = () => {
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.fullName.trim()) newErrors.fullName = 'Vui lòng nhập họ và tên';
         if (!formData.email.trim()) newErrors.email = 'Vui lòng nhập email';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email không hợp lệ';
         if (!formData.password) newErrors.password = 'Vui lòng nhập mật khẩu';
@@ -56,7 +54,7 @@ const RegisterForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-                <div>
+                {/* <div>
                     <label className="form-label small fw-bold text-muted px-1">Họ và tên</label>
                     <input
                         type="text"
@@ -68,7 +66,7 @@ const RegisterForm = () => {
                         onChange={handleChange}
                     />
                     {errors.fullName && <div className="invalid-feedback">{errors.fullName}</div>}
-                </div>
+                </div> */}
 
                 <div>
                     <label className="form-label small fw-bold text-muted px-1">Email</label>
@@ -77,6 +75,7 @@ const RegisterForm = () => {
                         name="email"
                         className={`form-control form-control-custom${errors.email ? ' is-invalid' : ''}`}
                         placeholder="Nhập email"
+                        ref={emailInputRef}
                         value={formData.email}
                         onChange={handleChange}
                     />
