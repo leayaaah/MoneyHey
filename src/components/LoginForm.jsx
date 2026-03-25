@@ -4,8 +4,8 @@ import { supabase } from '../services/supabase';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
+        email: 'thuyace321@gmail.com',
+        password: '1234231',
         rememberMe: false
     });
     const [errors, setErrors] = useState({});

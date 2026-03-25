@@ -219,6 +219,8 @@ const Dashboard = ({ onLogout }) => {
             }
             const total = wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0);
             setTotalBalance(total);
+            console.log(total);
+            
             } catch (err) {
             console.error("Lỗi mạng lưới:", err);
         }

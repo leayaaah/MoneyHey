@@ -1,9 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/Header.css';
+import { supabase } from '../services/supabase';
 
-const Header = ({ onToggleSidebar, onLogout, user = { name: 'Nguyễn Văn A', email: 'user@moneyhey.vn', avatar: null } }) => {
+const Header = ({ onToggleSidebar, onLogout }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [notifCount] = useState(3);
+    const [user, setUser] = useState({ name: "User", email: "user@moneyhey.vn", avatar: null });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const { data: authData, error: authError } = await supabase.auth.getUser();
+                
+                if (authError || !authData.user) {
+                    console.log("Chưa đăng nhập, không tải profile.");
+                    return; 
+                }
+
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('full_name, email, avatar_img') 
+                    .eq('user_id', authData.user.id)        
+                    .single(); 
+
+                if (profileError) {
+                    console.error("Lỗi khi tải hồ sơ:", profileError.message);
+                    return;
+                }
+
+                if (profileData) {
+                    setUser({
+                        name: profileData.full_name,
+                        email: profileData.email,
+                        avatar: profileData.avatar_img
+                    });
+                    console.log("Đã tải xong Profile:", profileData);
+                }
+
+            } catch (err) {
+                console.error("Lỗi mạng lưới:", err);
+            }
+        };
+        fetchProfile();
+    }, []);
 
     const initials = user.name
         .split(' ')

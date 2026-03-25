@@ -11,14 +11,10 @@ const LoginHeader = () => (
             <nav className="d-none d-md-flex gap-4">
                 <a href="#signin" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>Đăng nhập</a>
                 <a href="#explore" className="text-decoration-none text-muted">Khám phá</a>
-                <a href="#archive" className="text-decoration-none text-muted">Kho lưu trữ</a>
             </nav>
 
             <div className="d-flex align-items-center gap-2">
                 <button className="btn btn-link text-muted text-decoration-none btn-sm d-none d-md-block">Help</button>
-                <button className="btn d-md-none border-0 p-1" aria-label="Open menu">
-                    <span className="material-symbols-outlined" style={{ color: 'var(--text-main)' }}>menu</span>
-                </button>
             </div>
         </div>
     </header>
