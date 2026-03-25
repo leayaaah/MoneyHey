@@ -1,0 +1,14 @@
+.register-card {
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    min-height: 600px;
+}
+
+@media (max-width: 768px) {
+    .register-card {
+        min-height: auto;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+}

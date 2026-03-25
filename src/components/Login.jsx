@@ -4,7 +4,7 @@ import LoginForm from './LoginForm';
 import Footer from './Footer';
 import '../css/Login.css';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, onNavigateToRegister }) => {
     return (
         <div className="min-vh-100 d-flex flex-column">
             <LoginHeader />
@@ -34,7 +34,7 @@ const Login = ({ onLoginSuccess }) => {
                                         
                                         <div className="mt-2">
                                             <p className="small opacity-75 mb-3">Chưa có tài khoản?</p>
-                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline" style={{borderWidth: '2px'}}>
+                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline" style={{borderWidth: '2px'}} onClick={onNavigateToRegister}>
                                                 Đăng ký ngay
                                             </button>
                                         </div>
