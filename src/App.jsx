@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import Login from './components/Login'
+import Register from './components/Register'
 
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [page, setPage] = useState('login')
 
   return (
     <>
-      <Login/>
+      {page === 'login'
+        ? <Login onNavigateToRegister={() => setPage('register')} />
+        : <Register onNavigateToLogin={() => setPage('login')} />
+      }
     </>
   )
 }
