@@ -1,0 +1,32 @@
+/* 
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap'); */
+
+:root {
+    --emerald-primary: #006948;
+    --emerald-dim: #005b3f;
+    --emerald-light: #8cfeca;
+    --surface-bg: #f5f6f8;
+    --text-main: #2c2f31;
+    --text-variant: #595c5e;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--surface-bg);
+    color: var(--text-main);
+    min-height: 100vh;
+    margin: 0;
+}
+
+h1, h2, .font-headline {
+    font-family: 'Manrope', sans-serif;
+}
+
+.emerald-gradient {
+    background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-light) 100%);
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

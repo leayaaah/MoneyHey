@@ -1,0 +1,14 @@
+.login-card {
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    min-height: 600px;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        min-height: auto; /* Xóa chiều cao cố định trên mobile */
+        border-radius: 1.5rem; /* Bo góc nhỏ lại một chút */
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); /* Giảm bóng đổ */
+    }
+}
