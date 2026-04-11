@@ -1,76 +1,38 @@
-import { useState, useEffect } from 'react'
-import Login from './components/Login'
-import Register from './components/Register'
-import Dashboard from './components/Dashboard'
-import Explore from './components/Explore'
-import { supabase } from './services/supabase'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import ExplorePage from './pages/ExplorePage';
+import useAuth from './hooks/useAuth';
 
-import './App.css'
+import './App.css';
 
-function App() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+function AppRoutes() {
+    const { isLoggedIn, loadingAuth, logout } = useAuth();
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const savedSession = localStorage.getItem('moneyhey_session')
-    if (savedSession) {
-      try {
-        const session = JSON.parse(savedSession)
-        const isExpired = session.expires_at && session.expires_at * 1000 < Date.now()
-        if (isExpired) {
-          localStorage.removeItem('moneyhey_session')
-          return
+    useEffect(() => {
+        if (!loadingAuth && isLoggedIn) {
+            navigate('/dashboard', { replace: true });
         }
-        supabase.auth.setSession(session).then(({ data, error }) => {
-          if (!error && data.session) {
-            setIsLoggedIn(true)
-          } else {
-            localStorage.removeItem('moneyhey_session')
-          }
-        })
-      } catch {
-        localStorage.removeItem('moneyhey_session')
-      }
-    }
-  }, [])
+    }, [isLoggedIn, loadingAuth, navigate]);
 
-  const handleLogout = async () => {
-    localStorage.removeItem('moneyhey_session')
-    await supabase.auth.signOut()
-    setIsLoggedIn(false)
-    navigate('/login');
-  }
+    if (loadingAuth) return null;
 
-  if (isLoggedIn) {
-    navigate('/dashboard');
-    return <Dashboard onLogout={handleLogout} />
-  }
-
-  return (
-    <>
-    <Routes>
-      <Route path='/login' element={<Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
-      <Route path='/register' element={<Register />} />
-      <Route path='/explore' element={<Explore />} />
-      <Route path='/dashboard' element={<Dashboard onLogout={handleLogout} />} />
-
-
-      <Route path='/' element={<Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
-    </Routes>
-
-
-
-      {/* {
-      page === 'login'
-        ? <Login
-            onLoginSuccess={() => setIsLoggedIn(true)}
-            onNavigateToRegister={() => setPage('register')}
-          />
-        : <Register onNavigateToLogin={() => setPage('login')} />
-      } */}
-    </>
-  )
+    return (
+        <Routes>
+            <Route path="/login" element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/dashboard" element={isLoggedIn ? <DashboardPage onLogout={logout} /> : <Navigate to="/login" replace />} />
+            <Route path="/" element={<Navigate to={isLoggedIn ? '/dashboard' : '/login'} replace />} />
+        </Routes>
+    );
 }
 
-export default App
+function App() {
+    return <AppRoutes />;
+}
+
+export default App;

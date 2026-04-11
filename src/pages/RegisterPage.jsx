@@ -1,12 +1,11 @@
 import React from 'react';
-import Header from './Header';
-import RegisterForm from './RegisterForm';
-import Footer from './Footer';
+import LoginHeader from '../components/LoginHeader';
+import RegisterForm from '../components/RegisterForm';
+import Footer from '../components/Footer';
 import '../css/Register.css';
 import { useNavigate } from 'react-router-dom';
-import LoginHeader from './LoginHeader';
 
-const Register = ({ onNavigateToLogin }) => {
+const RegisterPage = () => {
     const navigate = useNavigate();
 
     return (
@@ -59,4 +58,4 @@ const Register = ({ onNavigateToLogin }) => {
     );
 };
 
-export default Register;
+export default RegisterPage;

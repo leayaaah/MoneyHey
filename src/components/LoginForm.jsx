@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../css/LoginForm.css'; // Chỉ import CSS của Form
+import '../css/LoginForm.css';
 import { supabase } from '../services/supabase';
+import useAuth from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-const LoginForm = ({ onLoginSuccess }) => {
+const LoginForm = () => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        email: 'thuyace321@gmail.com',
-        password: '1234231',
-        rememberMe: false
+        email: '',
+        password: '',
     });
     const [errors, setErrors] = useState({});
 
@@ -21,11 +24,8 @@ const LoginForm = ({ onLoginSuccess }) => {
     }, []);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
     const validate = () => {
@@ -49,22 +49,19 @@ const LoginForm = ({ onLoginSuccess }) => {
             setErrors(validationErrors);
             return;
         }
-        const {data : authData, error : authError} = await supabase.auth.signInWithPassword({
+        const { error: authError } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password
-        }); 
+        });
         if (authError) {
-            console.error("Lỗi rồi:", authError.message);
+            console.error('Lỗi đăng nhập:', authError.message);
             if (authError.status === 400) {
                 setErrors({ password: 'Email hoặc mật khẩu không đúng' });
                 focusPasswordInput();
             }
         } else {
-            console.log("Đăng nhập thành công!", authData);
-            if (formData.rememberMe) {
-                localStorage.setItem('moneyhey_session', JSON.stringify(authData.session));
-            }
-            onLoginSuccess();
+            login();
+            navigate('/dashboard');
         }
     };
     return (
@@ -99,20 +96,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                     />
                     {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                 </div>                
-                <div className="d-flex justify-content-between align-items-center small">
-                    <div className="form-check">
-                        <input 
-                            className="form-check-input" 
-                            type="checkbox" 
-                            name="rememberMe"
-                            id="rememberMe"
-                            checked={formData.rememberMe}
-                            onChange={handleChange}
-                        />
-                        <label className="form-check-label text-muted" htmlFor="rememberMe">
-                            Lưu đăng nhập
-                        </label>
-                    </div>
+                <div className="d-flex justify-content-end align-items-center small">
                     <a href="#forgot" className="text-decoration-none" style={{color: 'var(--emerald-primary)'}}>Forgot Password?</a>
                 </div>
 
