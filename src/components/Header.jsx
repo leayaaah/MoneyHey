@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../css/Header.css';
 import { supabase } from '../services/supabase';
+import useAuth from '../hooks/useAuth';
 
 const Header = ({ onToggleSidebar, onLogout }) => {
+    const { logout } = useAuth();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [notifCount] = useState(3);
     const [user, setUser] = useState({ name: "User", email: "user@moneyhey.vn", avatar: null });
@@ -54,9 +56,8 @@ const Header = ({ onToggleSidebar, onLogout }) => {
         const ok = window.confirm('Bạn có chắc muốn đăng xuất không?');
         if (!ok) return;
         setShowUserMenu(false);
+        logout();
         onLogout && onLogout();
-        console.log('User logged out');
-        
     }
     
 

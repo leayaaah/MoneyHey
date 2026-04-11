@@ -1,47 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
+import Header from '../components/Header';
 import '../css/Dashboard.css';
-import { useNavigate } from 'react-router-dom';
-import {supabase} from "../services/supabase"
-
-const SUMMARY_CARDS = [
-    // {
-    //     id: 'balance',
-    //     label: 'Tổng số dư',
-    //     value: '42.500.000 ₫',
-    //     change: '+2.3%',
-    //     positive: true,
-    //     icon: 'account_balance_wallet',
-    //     color: 'card-emerald',
-    // },
-    // {
-    //     id: 'income',
-    //     label: 'Thu nhập tháng này',
-    //     value: '15.000.000 ₫',
-    //     change: '+5.1%',
-    //     positive: true,
-    //     icon: 'trending_up',
-    //     color: 'card-blue',
-    // },
-    // {
-    //     id: 'expense',
-    //     label: 'Chi tiêu tháng này',
-    //     value: '8.350.000 ₫',
-    //     change: '-1.2%',
-    //     positive: false,
-    //     icon: 'trending_down',
-    //     color: 'card-red',
-    // },
-    // {
-    //     id: 'savings',
-    //     label: 'Tiết kiệm',
-    //     value: '6.650.000 ₫',
-    //     change: '+12.8%',
-    //     positive: true,
-    //     icon: 'savings',
-    //     color: 'card-amber',
-    // },
-];
+import { supabase } from '../services/supabase';
+import { formatCurrency } from '../utils/formatters';
 
 const TRANSACTIONS = [
     { id: 1, name: 'Siêu thị Vinmart',   category: 'Ăn uống',       date: '24/03/2026', amount: '-320.000 ₫', type: 'expense' },
@@ -89,25 +50,6 @@ const Sidebar = ({ open, activeNav, onNav }) => (
             </nav>
         </aside>
     </>
-);
-
-/* ─── Summary card ────────────────────────────────────────── */
-const SummaryCard = ({ label, value, change, positive, icon, color }) => (
-    <div className={`summary-card ${color}`}>
-        <div className="summary-card-icon">
-            <span className="material-symbols-outlined">{icon}</span>
-        </div>
-        <div className="summary-card-body">
-            <div className="summary-card-label">{label}</div>
-            <div className="summary-card-value">{value}</div>
-            <div className={`summary-card-change ${positive ? 'change-up' : 'change-down'}`}>
-                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>
-                    {positive ? 'arrow_upward' : 'arrow_downward'}
-                </span>
-                {change} so với tháng trước
-            </div>
-        </div>
-    </div>
 );
 
 /* ─── Spending bar chart (CSS-only) ──────────────────────── */
@@ -200,7 +142,7 @@ const QuickActions = () => (
     </div>
 );
 
-const Dashboard = ({ onLogout }) => {
+const DashboardPage = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeNav, setActiveNav] = useState('dashboard');
     const [totalBalance, setTotalBalance] = useState(0);
@@ -208,28 +150,25 @@ const Dashboard = ({ onLogout }) => {
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+
     useEffect(() => {
-      const fetchBalance = async() =>{
-        try {
-            const { data: wallets, error } = await supabase
-                .from('wallets')
-                .select('balance');
-            if (error) {
-                console.error("lỗi:", error.message);
-                return;
-            }
-            const total = wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0);
-            setTotalBalance(total);
-            console.log(total);
-            
+        const fetchBalance = async () => {
+            try {
+                const { data: wallets, error } = await supabase
+                    .from('wallets')
+                    .select('balance');
+                if (error) {
+                    console.error('Lỗi:', error.message);
+                    return;
+                }
+                const total = wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0);
+                setTotalBalance(total);
             } catch (err) {
-            console.error("Lỗi mạng lưới:", err);
-        }
-      };
-      fetchBalance();
-      
-    }, [])
-    
+                console.error('Lỗi mạng lưới:', err);
+            }
+        };
+        fetchBalance();
+    }, []);
 
     return (
         <div className="dashboard-shell">
@@ -245,17 +184,17 @@ const Dashboard = ({ onLogout }) => {
                             <h1 className="page-title font-headline">Tổng quan</h1>
                             <p className="page-subtitle">{formattedDate}</p>
                         </div>
-                        <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
-                            Thêm giao dịch
-                        </button>
-                    </div>
-
-                    {/* Summary cards */}
-                    <div className="summary-grid">
-                        {SUMMARY_CARDS.map(card => (
-                            <SummaryCard key={card.id} {...card} />
-                        ))}
+                        <div className="d-flex align-items-center gap-3">
+                            {totalBalance > 0 && (
+                                <span className="fw-semibold" style={{ color: 'var(--emerald-primary)' }}>
+                                    {formatCurrency(totalBalance)}
+                                </span>
+                            )}
+                            <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                Thêm giao dịch
+                            </button>
+                        </div>
                     </div>
 
                     {/* Bottom row */}
@@ -278,4 +217,4 @@ const Dashboard = ({ onLogout }) => {
     );
 };
 
-export default Dashboard;
+export default DashboardPage;
