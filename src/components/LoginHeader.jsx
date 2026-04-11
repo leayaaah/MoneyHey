@@ -1,5 +1,6 @@
 import React from 'react';
 import '../css/Header.css';
+import { Link } from 'react-router-dom';
 
 const LoginHeader = () => (
     <header className="login-header fixed-top d-flex align-items-center px-3 px-md-5">
@@ -9,8 +10,15 @@ const LoginHeader = () => (
             </div>
 
             <nav className="d-none d-md-flex gap-4">
-                <a href="#signin" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>Đăng nhập</a>
-                <a href="#explore" className="text-decoration-none text-muted">Khám phá</a>
+                <Link to="/login" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>
+                    Đăng nhập
+                </Link>
+                <Link to="/register" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>
+                    Đăng ký
+                </Link>
+                <Link to="/explore" className="text-decoration-none text-muted">
+                    Khám phá
+                </Link>
             </nav>
 
             <div className="d-flex align-items-center gap-2">

@@ -51,9 +51,17 @@ const Header = ({ onToggleSidebar, onLogout }) => {
         .join('')
         .toUpperCase();
     const handleLogout = () => {
-        
+        const ok = window.confirm('Bạn có chắc muốn đăng xuất không?');
+        if (!ok) return;
+        setShowUserMenu(false);
+        onLogout && onLogout();
         console.log('User logged out');
+        
     }
+    
+
+    
+
 
     return (
         <header className="dashboard-header d-flex align-items-center px-3 px-md-4">
@@ -115,11 +123,12 @@ const Header = ({ onToggleSidebar, onLogout }) => {
 
                     {showUserMenu && (
                         <div className="user-dropdown shadow">
-                            <div className="user-dropdown-header px-3 pt-3 pb-2">
+                            <div className="dropdown-arrow">
+                                <div className="user-dropdown-header px-3 pt-3 pb-2">
                                 <div className="fw-bold small">{user.name}</div>
                                 <div className="text-muted" style={{ fontSize: '12px' }}>{user.email}</div>
                             </div>
-                            <hr className="my-1" />
+
                             <a href="#profile" className="dropdown-item small py-2">
                                 <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>person</span>
                                 Hồ sơ
@@ -128,14 +137,15 @@ const Header = ({ onToggleSidebar, onLogout }) => {
                                 <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>settings</span>
                                 Cài đặt
                             </a>
-                            <hr className="my-1" />
+
                             <button
                                 className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
-                                onClick={() => { setShowUserMenu(false); onLogout && onLogout(); }}
+                                onClick={handleLogout}
                             >
                                 <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>logout</span>
                                 Đăng xuất
                             </button>
+                            </div>
                         </div>
                     )}
                 </div>

@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import Login from './components/Login'
 import Register from './components/Register'
 import Dashboard from './components/Dashboard'
+import Explore from './components/Explore'
 import { supabase } from './services/supabase'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import './App.css'
 
 function App() {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [page, setPage] = useState('login')
 
   useEffect(() => {
     const savedSession = localStorage.getItem('moneyhey_session')
@@ -37,22 +39,36 @@ function App() {
     localStorage.removeItem('moneyhey_session')
     await supabase.auth.signOut()
     setIsLoggedIn(false)
+    navigate('/login');
   }
 
   if (isLoggedIn) {
+    navigate('/dashboard');
     return <Dashboard onLogout={handleLogout} />
   }
 
   return (
     <>
-      {
+    <Routes>
+      <Route path='/login' element={<Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
+      <Route path='/register' element={<Register />} />
+      <Route path='/explore' element={<Explore />} />
+      <Route path='/dashboard' element={<Dashboard onLogout={handleLogout} />} />
+
+
+      <Route path='/' element={<Login onLoginSuccess={() => setIsLoggedIn(true)} />} />
+    </Routes>
+
+
+
+      {/* {
       page === 'login'
         ? <Login
             onLoginSuccess={() => setIsLoggedIn(true)}
             onNavigateToRegister={() => setPage('register')}
           />
         : <Register onNavigateToLogin={() => setPage('login')} />
-      }
+      } */}
     </>
   )
 }

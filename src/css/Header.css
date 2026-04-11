@@ -39,7 +39,6 @@
 .btn-icon {
     color: var(--text-variant);
     border-radius: 0.5rem;
-    transition: background 0.15s, color 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -104,18 +103,17 @@
     overflow: hidden;
 }
 
+.dropdown-arrow {
+    margin: 10px;
+}
 
 .user-dropdown .dropdown-item {
-    margin-left: 20px;
+    margin: 10px;
     display: flex;
     align-items: center;
     color: var(--text-main);
 }
 
 .user-dropdown .dropdown-item:hover {
-    background: var(--surface-bg);
-}
-
-.user-dropdown-header {
-    background: var(--surface-bg);
+    transform: translateY(-3px);
 }

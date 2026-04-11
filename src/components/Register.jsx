@@ -3,11 +3,15 @@ import Header from './Header';
 import RegisterForm from './RegisterForm';
 import Footer from './Footer';
 import '../css/Register.css';
+import { useNavigate } from 'react-router-dom';
+import LoginHeader from './LoginHeader';
 
 const Register = ({ onNavigateToLogin }) => {
+    const navigate = useNavigate();
+
     return (
         <div className="min-vh-100 d-flex flex-column">
-            <Header />
+            <LoginHeader />
 
             <main className="flex-grow-1 d-flex align-items-center justify-content-center p-3 pt-5 mt-4">
                 <div className="container-fluid" style={{ maxWidth: '1200px' }}>
@@ -32,7 +36,7 @@ const Register = ({ onNavigateToLogin }) => {
                                             <button
                                                 className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline"
                                                 style={{borderWidth: '2px'}}
-                                                onClick={onNavigateToLogin}
+                                                onClick={() => navigate('/login')}
                                             >
                                                 Đăng nhập
                                             </button>

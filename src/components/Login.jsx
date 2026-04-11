@@ -3,8 +3,11 @@ import LoginHeader from './LoginHeader';
 import LoginForm from './LoginForm';
 import Footer from './Footer';
 import '../css/Login.css';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLoginSuccess, onNavigateToRegister }) => {
+
+const Login = ({ onLoginSuccess }) => {
+    const navigate = useNavigate();
     return (
         <div className="min-vh-100 d-flex flex-column">
             <LoginHeader />
@@ -34,7 +37,7 @@ const Login = ({ onLoginSuccess, onNavigateToRegister }) => {
                                         
                                         <div className="mt-2">
                                             <p className="small opacity-75 mb-3">Chưa có tài khoản?</p>
-                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline" style={{borderWidth: '2px'}} onClick={onNavigateToRegister}>
+                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline" style={{borderWidth: '2px'}} onClick={() => {navigate('/register')}}>
                                                 Đăng ký ngay
                                             </button>
                                         </div>
