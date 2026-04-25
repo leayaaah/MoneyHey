@@ -8,8 +8,10 @@ const NAV_ITEMS = [
     { id: 'settings',     label: 'Cài đặt',      icon: 'settings' },
 ];
 
+
 const Sidebar = ({ open, activeNav, onNav }) => (
     <>
+
         {open && <div className="sidebar-backdrop d-md-none" />}
         <aside className={`sidebar ${open ? 'sidebar-open' : ''}`}>
             <nav className="sidebar-nav pt-3">

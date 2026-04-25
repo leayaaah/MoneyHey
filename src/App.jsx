@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import ExplorePage from './pages/ExplorePage'
+import TransactionPage from './pages/TransactionPage'
+import ProtectedRoute from './components/auth/ProtectedRoute'
 
 import './App.css'
 
@@ -15,8 +17,6 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) 
       navigate('/dashboard');
-    else 
-      navigate('/login');
   }, [isLoggedIn, navigate]);
 
   return (
@@ -24,8 +24,14 @@ function App() {
       <Route path='/login'     element={<LoginPage onLoginSuccess={setIsLoggedIn} />} />
       <Route path='/register'  element={<RegisterPage />} />
       <Route path='/explore'   element={<ExplorePage />} />
-      <Route path='/dashboard' element={<DashboardPage onLogout={handleLogout} />} />
-      <Route path='/'          element={<LoginPage onLoginSuccess={setIsLoggedIn} />} />
+
+      <Route element={<ProtectedRoute isAuthenticated={isLoggedIn} />}>
+        <Route path='/dashboard' element={<DashboardPage onLogout={handleLogout} />} />
+        <Route path='/transaction' element={<TransactionPage />} />
+        
+      </Route>
+
+      <Route path='/' element={<LoginPage onLoginSuccess={setIsLoggedIn} />} />
     </Routes>
   )
 }

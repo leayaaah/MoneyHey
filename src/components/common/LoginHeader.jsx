@@ -10,12 +10,6 @@ const LoginHeader = () => (
             </div>
 
             <nav className="d-none d-md-flex gap-4">
-                <Link to="/login" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>
-                    Đăng nhập
-                </Link>
-                <Link to="/register" className="text-decoration-none fw-bold" style={{ color: 'var(--emerald-primary)' }}>
-                    Đăng ký
-                </Link>
                 <Link to="/explore" className="text-decoration-none text-muted">
                     Khám phá
                 </Link>

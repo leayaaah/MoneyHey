@@ -7,8 +7,11 @@ import RecentTransactions from '../components/dashboard/RecentTransactions';
 import QuickActions from '../components/dashboard/QuickActions';
 import '../css/Dashboard.css';
 import { getTotalBalance } from '../services/walletService';
+import { useNavigate } from 'react-router-dom';
+
 
 const SUMMARY_CARDS = [];
+
 
 const DashboardPage = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -18,6 +21,21 @@ const DashboardPage = ({ onLogout }) => {
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+    const navigate = useNavigate();
+
+    const routes = {
+        dashboard: '/dashboard',
+        transactions: '/transactions',
+        reports: '/reports',
+        budget: '/budget',
+        settings: '/settings',
+    };
+
+    useEffect(() => {
+        if (routes[activeNav]) {
+            navigate(routes[activeNav]);
+        }
+    }, [activeNav]);
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -31,12 +49,15 @@ const DashboardPage = ({ onLogout }) => {
         };
         fetchBalance();
     }, []);
+    
 
     return (
         <div className="dashboard-shell">
+        
             <Header onToggleSidebar={() => setSidebarOpen(v => !v)} onLogout={onLogout} />
 
             <div className="dashboard-body">
+                {/* Sidebar = ({ open, activeNav, onNav }) */}
                 <Sidebar open={sidebarOpen} activeNav={activeNav} onNav={setActiveNav} />
 
                 <main className={`dashboard-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
