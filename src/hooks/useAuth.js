@@ -29,8 +29,12 @@ export function useAuth() {
 
     const signIn = async (email, password, rememberMe = false) => {
         const data = await authService.signIn(email, password);
-        if (rememberMe) {
-            localStorage.setItem('moneyhey_session', JSON.stringify(data.session));
+        if (rememberMe && data.session) {
+            // Security note: storing refresh/access tokens in localStorage is an explicit
+            // "remember me" choice made by the user. Tokens are short-lived JWTs transmitted
+            // only over HTTPS. Do NOT enable this storage without explicit user consent.
+            const { access_token, refresh_token, expires_at } = data.session;
+            localStorage.setItem('moneyhey_session', JSON.stringify({ access_token, refresh_token, expires_at }));
         }
         setIsLoggedIn(true);
         return data;
