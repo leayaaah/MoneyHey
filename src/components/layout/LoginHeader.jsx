@@ -1,5 +1,7 @@
+// src/components/layout/LoginHeader.jsx
+// Presentation layer — header for auth pages (login / register)
 import React from 'react';
-import '../css/Header.css';
+import '../../css/Header.css';
 import { Link } from 'react-router-dom';
 
 const LoginHeader = () => (

@@ -1,4 +1,5 @@
-// src/services/supabase.js
+// src/config/supabase.js
+// Infrastructure layer — Supabase client initialisation
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://vpztqqjlbtoszfomvshx.supabase.co'
