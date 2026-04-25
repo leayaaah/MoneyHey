@@ -60,7 +60,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             if (formData.rememberMe) {
                 localStorage.setItem('moneyhey_session', JSON.stringify(authData.session));
             }
-            onLoginSuccess();
+            onLoginSuccess(true);
         }
     };
 
