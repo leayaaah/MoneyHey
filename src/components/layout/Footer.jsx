@@ -1,4 +1,5 @@
-// Footer.jsx
+// src/components/layout/Footer.jsx
+// Presentation layer — page footer
 import React from 'react';
 
 const Footer = () => (

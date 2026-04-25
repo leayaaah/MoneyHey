@@ -1,48 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import '../css/Header.css';
-import { supabase } from '../services/supabase';
+// src/components/layout/Header.jsx
+// Presentation layer — top navigation bar (uses useProfile hook)
+import React, { useState } from 'react';
+import '../../css/Header.css';
+import { useProfile } from '../../hooks/useProfile';
 
 const Header = ({ onToggleSidebar, onLogout }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [notifCount] = useState(3);
-    const [user, setUser] = useState({ name: "User", email: "user@moneyhey.vn", avatar: null });
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const { data: authData, error: authError } = await supabase.auth.getUser();
-                
-                if (authError || !authData.user) {
-                    console.log("Chưa đăng nhập, không tải profile.");
-                    return; 
-                }
-
-                const { data: profileData, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('full_name, email, avatar_img') 
-                    .eq('user_id', authData.user.id)        
-                    .single(); 
-
-                if (profileError) {
-                    console.error("Lỗi khi tải hồ sơ:", profileError.message);
-                    return;
-                }
-
-                if (profileData) {
-                    setUser({
-                        name: profileData.full_name,
-                        email: profileData.email,
-                        avatar: profileData.avatar_img
-                    });
-                    console.log("Đã tải xong Profile:", profileData);
-                }
-
-            } catch (err) {
-                console.error("Lỗi mạng lưới:", err);
-            }
-        };
-        fetchProfile();
-    }, []);
+    const { user } = useProfile();
 
     const initials = user.name
         .split(' ')
@@ -50,18 +15,13 @@ const Header = ({ onToggleSidebar, onLogout }) => {
         .map(w => w[0])
         .join('')
         .toUpperCase();
+
     const handleLogout = () => {
         const ok = window.confirm('Bạn có chắc muốn đăng xuất không?');
         if (!ok) return;
         setShowUserMenu(false);
         onLogout && onLogout();
-        console.log('User logged out');
-        
-    }
-    
-
-    
-
+    };
 
     return (
         <header className="dashboard-header d-flex align-items-center px-3 px-md-4">
@@ -125,26 +85,26 @@ const Header = ({ onToggleSidebar, onLogout }) => {
                         <div className="user-dropdown shadow">
                             <div className="dropdown-arrow">
                                 <div className="user-dropdown-header px-3 pt-3 pb-2">
-                                <div className="fw-bold small">{user.name}</div>
-                                <div className="text-muted" style={{ fontSize: '12px' }}>{user.email}</div>
-                            </div>
+                                    <div className="fw-bold small">{user.name}</div>
+                                    <div className="text-muted" style={{ fontSize: '12px' }}>{user.email}</div>
+                                </div>
 
-                            <a href="#profile" className="dropdown-item small py-2">
-                                <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>person</span>
-                                Hồ sơ
-                            </a>
-                            <a href="#settings" className="dropdown-item small py-2">
-                                <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>settings</span>
-                                Cài đặt
-                            </a>
+                                <a href="#profile" className="dropdown-item small py-2">
+                                    <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>person</span>
+                                    Hồ sơ
+                                </a>
+                                <a href="#settings" className="dropdown-item small py-2">
+                                    <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>settings</span>
+                                    Cài đặt
+                                </a>
 
-                            <button
-                                className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
-                                onClick={handleLogout}
-                            >
-                                <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>logout</span>
-                                Đăng xuất
-                            </button>
+                                <button
+                                    className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
+                                    onClick={handleLogout}
+                                >
+                                    <span className="material-symbols-outlined me-2" style={{ fontSize: '16px', verticalAlign: 'middle' }}>logout</span>
+                                    Đăng xuất
+                                </button>
                             </div>
                         </div>
                     )}
