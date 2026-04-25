@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../css/RegisterForm.css';
+import '../../css/RegisterForm.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -54,20 +54,6 @@ const RegisterForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-                {/* <div>
-                    <label className="form-label small fw-bold text-muted px-1">Họ và tên</label>
-                    <input
-                        type="text"
-                        name="fullName"
-                        ref={fullNameInputRef}
-                        className={`form-control form-control-custom${errors.fullName ? ' is-invalid' : ''}`}
-                        placeholder="Nhập họ và tên"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                    />
-                    {errors.fullName && <div className="invalid-feedback">{errors.fullName}</div>}
-                </div> */}
-
                 <div>
                     <label className="form-label small fw-bold text-muted px-1">Email</label>
                     <input

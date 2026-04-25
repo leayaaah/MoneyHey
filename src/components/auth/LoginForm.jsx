@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../css/LoginForm.css'; // Chỉ import CSS của Form
-import { supabase } from '../services/supabase';
+import '../../css/LoginForm.css';
+import { signIn } from '../../services/authService';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
@@ -9,8 +9,6 @@ const LoginForm = ({ onLoginSuccess }) => {
         rememberMe: false
     });
     const [errors, setErrors] = useState({});
-
-    
 
     const emailInputRef = useRef(null);
 
@@ -28,19 +26,20 @@ const LoginForm = ({ onLoginSuccess }) => {
         }));
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
+
     const validate = () => {
         const newErrors = {};
         if (!formData.email.trim()) newErrors.email = 'Vui lòng nhập email';
         if (!formData.password) newErrors.password = 'Vui lòng nhập mật khẩu';
         return newErrors;
     };
+
     const focusPasswordInput = () => {
         const passwordInput = document.querySelector('input[name="password"]');
         if (passwordInput) {
             passwordInput.focus();
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,10 +48,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             setErrors(validationErrors);
             return;
         }
-        const {data : authData, error : authError} = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password
-        }); 
+        const { data: authData, error: authError } = await signIn(formData.email, formData.password);
         if (authError) {
             console.error("Lỗi rồi:", authError.message);
             if (authError.status === 400) {
@@ -67,6 +63,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             onLoginSuccess();
         }
     };
+
     return (
         <div className="p-4 p-md-5 w-100" style={{ maxWidth: '440px', margin: '0 auto' }}>
             <div className="mb-5">
@@ -80,19 +77,19 @@ const LoginForm = ({ onLoginSuccess }) => {
                         type="text" 
                         name="email"
                         ref={emailInputRef}
-                        className= {`form-control form-control-custom ${errors.email ? 'is-invalid' : ''}`}
+                        className={`form-control form-control-custom ${errors.email ? 'is-invalid' : ''}`}
                         placeholder="Nhập email"
                         value={formData.email}
                         onChange={handleChange}
                     />
-                    {errors.email && <div className="invalid-feedback">{errors.email}</div> }
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
                 <div>
                     <label className="form-label small fw-bold text-muted px-1">Mật khẩu</label>
                     <input 
                         type="password" 
                         name="password"
-                        className= {`form-control form-control-custom ${errors.password ? 'is-invalid' : ''}`}
+                        className={`form-control form-control-custom ${errors.password ? 'is-invalid' : ''}`}
                         placeholder="Nhập mật khẩu"
                         value={formData.password}
                         onChange={handleChange}

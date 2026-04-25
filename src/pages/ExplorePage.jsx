@@ -1,12 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ExplorePage() {
+const ExplorePage = () => {
   const navigate = useNavigate();
 
-
   return (
-
     <div className="container py-5">
       {/* Header */}
       <div className="text-center mb-5">
@@ -80,11 +78,12 @@ export default function ExplorePage() {
       {/* CTA */}
       <div className="text-center mt-5">
         <h4 className="mb-3">Sẵn sàng kiểm soát tài chính?</h4>
-        <button className="btn btn-success px-4 py-2"
-        onClick={() => navigate('/login')}>
+        <button className="btn btn-success px-4 py-2" onClick={() => navigate('/login')}>
           Bắt đầu ngay
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default ExplorePage;
