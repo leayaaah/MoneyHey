@@ -14,6 +14,7 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) navigate('/dashboard');
+    else navigate('/login');
   }, [isLoggedIn, navigate]);
 
   return (
