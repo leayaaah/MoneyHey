@@ -7,7 +7,7 @@ import RecentTransactions from '../components/dashboard/RecentTransactions';
 import QuickActions from '../components/dashboard/QuickActions';
 import '../css/Dashboard.css';
 import { getTotalBalance } from '../services/walletService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 const SUMMARY_CARDS = [];
@@ -16,12 +16,13 @@ const SUMMARY_CARDS = [];
 const DashboardPage = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeNav, setActiveNav] = useState('dashboard');
-    const [_totalBalance, setTotalBalance] = useState(0);
+    const [totalBalance, setTotalBalance] = useState(0);
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
     const navigate = useNavigate();
+    const location = useLocation();
 
     const routes = {
         dashboard: '/dashboard',
@@ -32,10 +33,14 @@ const DashboardPage = ({ onLogout }) => {
     };
 
     useEffect(() => {
-        if (routes[activeNav]) {
-            navigate(routes[activeNav]);
+        const path = routes[activeNav];
+
+        if (path && location.pathname !== path) {
+            navigate(path);
         }
-    }, [activeNav]);
+    }, [activeNav, location.pathname]);
+
+    console.log("render dashboard");
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -57,8 +62,7 @@ const DashboardPage = ({ onLogout }) => {
             <Header onToggleSidebar={() => setSidebarOpen(v => !v)} onLogout={onLogout} />
 
             <div className="dashboard-body">
-                {/* Sidebar = ({ open, activeNav, onNav }) */}
-                <Sidebar open={sidebarOpen} activeNav={activeNav} onNav={setActiveNav} />
+                <Sidebar open={sidebarOpen}/>
 
                 <main className={`dashboard-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
                     {/* Page title */}

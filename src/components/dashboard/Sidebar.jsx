@@ -1,25 +1,34 @@
-import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const NAV_ITEMS = [
-    { id: 'dashboard',    label: 'Tổng quan',    icon: 'dashboard' },
-    { id: 'transactions', label: 'Giao dịch',    icon: 'swap_horiz' },
-    { id: 'reports',      label: 'Báo cáo',      icon: 'bar_chart' },
-    { id: 'budget',       label: 'Ngân sách',    icon: 'savings' },
-    { id: 'settings',     label: 'Cài đặt',      icon: 'settings' },
-];
+const Sidebar = ({ open }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    const NAV_ITEMS = [
+        { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+        { id: 'transactions', label: 'Transactions', icon: 'receipt_long' },
+        { id: 'reports', label: 'Reports', icon: 'bar_chart' },
+        { id: 'budget', label: 'Budget', icon: 'account_balance_wallet' },
+        { id: 'settings', label: 'Settings', icon: 'settings' },
+    ];
+    const routes = {
+        dashboard: '/dashboard',
+        transactions: '/transactions',
+        reports: '/reports',
+        budget: '/budget',
+        settings: '/settings',
+    };
 
-const Sidebar = ({ open, activeNav, onNav }) => (
-    <>
-
-        {open && <div className="sidebar-backdrop d-md-none" />}
+    return (
         <aside className={`sidebar ${open ? 'sidebar-open' : ''}`}>
             <nav className="sidebar-nav pt-3">
                 {NAV_ITEMS.map(item => (
                     <button
                         key={item.id}
-                        className={`sidebar-nav-item ${activeNav === item.id ? 'active' : ''}`}
-                        onClick={() => onNav(item.id)}
+                        className={`sidebar-nav-item ${
+                            location.pathname === routes[item.id] ? 'active' : ''
+                        }`}
+                        onClick={() => navigate(routes[item.id])}
                     >
                         <span className="material-symbols-outlined">{item.icon}</span>
                         <span className="sidebar-label">{item.label}</span>
@@ -27,7 +36,6 @@ const Sidebar = ({ open, activeNav, onNav }) => (
                 ))}
             </nav>
         </aside>
-    </>
-);
-
+    );
+};
 export default Sidebar;

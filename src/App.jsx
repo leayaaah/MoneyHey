@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate} from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -11,27 +11,29 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import './App.css'
 
 function App() {
-  const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn, handleLogout } = useAuth();
-
-  useEffect(() => {
-    if (isLoggedIn) 
-      navigate('/dashboard');
-  }, [isLoggedIn, navigate]);
 
   return (
     <Routes>
-      <Route path='/login'     element={<LoginPage onLoginSuccess={setIsLoggedIn} />} />
+      <Route path='/login'    
+        element={isLoggedIn 
+          ? <Navigate to="/dashboard" replace /> 
+          : <LoginPage onLoginSuccess={setIsLoggedIn} />} />
       <Route path='/register'  element={<RegisterPage />} />
       <Route path='/explore'   element={<ExplorePage />} />
 
       <Route element={<ProtectedRoute isAuthenticated={isLoggedIn} />}>
         <Route path='/dashboard' element={<DashboardPage onLogout={handleLogout} />} />
-        <Route path='/transaction' element={<TransactionPage />} />
-        
+        <Route path='/transactions' element={<TransactionPage />}/>
       </Route>
 
-      <Route path='/' element={<LoginPage onLoginSuccess={setIsLoggedIn} />} />
+      <Route path='/' 
+        element={
+          isLoggedIn 
+            ? <Navigate to="/dashboard" replace /> 
+            : <LoginPage onLoginSuccess={setIsLoggedIn} />
+        } 
+      />
     </Routes>
   )
 }
