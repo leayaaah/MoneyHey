@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import Header from '../components/common/Header';
 import Sidebar from '../components/dashboard/Sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchTransactions } from '../services/transactionService';
+import { fetchCategories } from '../services/categoryService';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function TransactionPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeNav, setActiveNav] = useState('transactions');
     const [transactions, setTransactions] = useState([]);
+    const [categories, setCategories] = useState([]);
 
 
     useEffect(() => {
@@ -23,8 +25,21 @@ function TransactionPage({ onLogout }) {
         loadTransactions();
     }, []);
 
-    console.log(transactions);
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const data = await fetchCategories();
+                setCategories(data);
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        };
+        loadCategories();
+    }, []);
 
+    console.log(transactions);
+    console.log(categories);
+    
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -92,7 +107,7 @@ function TransactionPage({ onLogout }) {
                                             <form>
                                                 <div className="mb-3 row">
                                                     <label
-                                                        for="inputName"
+                                                        htmlFor="inputName"
                                                         className="col-3 col-form-label"
                                                         >Name</label
                                                     >
@@ -141,7 +156,10 @@ function TransactionPage({ onLogout }) {
                                     </div>
                                 </div>
                                 <div className={`transaction-amount ${tx.tx_type === 'expense' ? 'expense' : 'income'}`}>
-                                    {tx.tx_type === 'expense' ? '-' : '+'}{tx.amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                    {tx.tx_type === 'expense' ? '-' : '+'}{tx.amount?.toLocaleString('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                    })}
                                 </div>
                             </div>
                         ))}

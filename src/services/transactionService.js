@@ -1,4 +1,4 @@
-import { getTransactions } from "../repository/transactionRepo";
+import { getTransactions } from "../api/transactionRepo";
 
 export const fetchTransactions = async () => {
     try {
@@ -9,4 +9,13 @@ export const fetchTransactions = async () => {
         throw error;
     }   
     
+}
+export const createTransaction = async (transaction) => {
+    try {
+        const newTransaction = await addTransaction(transaction);
+        return newTransaction;
+    } catch (error) {
+        console.error('Error creating transaction:', error);
+        throw error;
+    }
 }

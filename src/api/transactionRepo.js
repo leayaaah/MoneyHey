@@ -9,3 +9,13 @@ export const getTransactions = async () => {
     }
     return data
 }
+export const addTransaction = async (transaction) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .insert(transaction)
+    if (error) {
+        console.error('Error adding transaction:', error)
+        throw error
+    }
+    return data
+}

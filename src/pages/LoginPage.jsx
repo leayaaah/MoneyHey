@@ -5,7 +5,7 @@ import Footer from '../components/common/Footer';
 import '../css/Login.css';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = ({ onLoginSuccess }) => {
+const LoginPage = () => {
     const navigate = useNavigate();
     return (
         <div className="min-vh-100 d-flex flex-column">
@@ -19,7 +19,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                             <div className="login-card bg-white d-flex flex-column flex-md-row">
 
                                 <div className="col-md-6 d-flex align-items-center bg-white">
-                                    <LoginForm onLoginSuccess={onLoginSuccess} />
+                                    <LoginForm />
                                 </div>
 
                                 <div className="col-md-6 emerald-gradient d-none d-md-flex flex-column justify-content-center align-items-center text-center p-5 position-relative text-white">

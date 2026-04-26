@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../css/LoginForm.css';
 import { signIn } from '../../services/authService';
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-const LoginForm = ({ onLoginSuccess }) => {
+const LoginForm = () => {
     const [formData, setFormData] = useState({
         email: 'thuyace321@gmail.com',
         password: '1234231',
@@ -17,6 +19,8 @@ const LoginForm = ({ onLoginSuccess }) => {
             emailInputRef.current.focus();
         }
     }, []);
+    const { login } = useAuth();
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -60,7 +64,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             if (formData.rememberMe) {
                 localStorage.setItem('moneyhey_session', JSON.stringify(authData.session));
             }
-            onLoginSuccess(true);
+            await login();
         }
     };
 

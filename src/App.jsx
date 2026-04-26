@@ -18,7 +18,7 @@ function App() {
       <Route path='/login'    
         element={isLoggedIn 
           ? <Navigate to="/dashboard" replace /> 
-          : <LoginPage onLoginSuccess={setIsLoggedIn} />} />
+          : <LoginPage />} />
       <Route path='/register'  element={<RegisterPage />} />
       <Route path='/explore'   element={<ExplorePage />} />
 
@@ -31,7 +31,7 @@ function App() {
         element={
           isLoggedIn 
             ? <Navigate to="/dashboard" replace /> 
-            : <LoginPage onLoginSuccess={setIsLoggedIn} />
+            : <LoginPage />
         } 
       />
     </Routes>
