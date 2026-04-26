@@ -39,6 +39,7 @@ export const AuthProvider = ({ children }) => {
                 const profile = await getProfile(authData.user.id);
 
                 setUser({
+                    user_id: authData.user.id,
                     name: profile?.full_name || 'User',
                     email: profile?.email || '',
                     avatar: profile?.avatar_img || null,
@@ -65,6 +66,7 @@ export const AuthProvider = ({ children }) => {
             const profile = await getProfile(authData.user.id);
 
             setUser({
+                user_id: authData.user.id,
                 name: profile?.full_name || 'User',
                 email: profile?.email || '',
                 avatar: profile?.avatar_img || null,

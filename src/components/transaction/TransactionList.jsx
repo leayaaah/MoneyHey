@@ -10,7 +10,7 @@ const TransactionList = ({ transactions }) => {
             {transactions.map(tx => (
                 <div
                     key={tx.trans_id}
-                    className="transaction-item d-flex align-items-center justify-content-between p-3 mb-2 rounded shadow-sm"
+                    className="transaction-item d-flex align-items-center justify-content-between p-3 mb-2 rounded bg-light "
                 >
                     <div className="d-flex align-items-center gap-3">
                         <div>
@@ -56,5 +56,6 @@ const TransactionList = ({ transactions }) => {
         </div>
     );
 };
+
 
 export default TransactionList;

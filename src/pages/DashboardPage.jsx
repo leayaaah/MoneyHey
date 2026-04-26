@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/common/Header';
-import Sidebar from '../components/dashboard/Sidebar';
+import Sidebar from '../components/common/Sidebar';
 import SummaryCard from '../components/dashboard/SummaryCard';
 import SpendingChart from '../components/dashboard/SpendingChart';
 import RecentTransactions from '../components/dashboard/RecentTransactions';
@@ -50,7 +50,6 @@ const DashboardPage = ({ onLogout }) => {
                 <Sidebar open={sidebarOpen}/>
 
                 <main className={`dashboard-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
-                    {/* Page title */}
                     <div className="page-title-row">
                         <div>
                             <h1 className="page-title font-headline">Tổng quan</h1>
