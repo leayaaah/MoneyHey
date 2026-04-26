@@ -24,21 +24,6 @@ const DashboardPage = ({ onLogout }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const routes = {
-        dashboard: '/dashboard',
-        transactions: '/transactions',
-        reports: '/reports',
-        budget: '/budget',
-        settings: '/settings',
-    };
-
-    useEffect(() => {
-        const path = routes[activeNav];
-
-        if (path && location.pathname !== path) {
-            navigate(path);
-        }
-    }, [activeNav, location.pathname]);
 
     console.log("render dashboard");
 

@@ -5,6 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchTransactions } from '../services/transactionService';
 import { fetchCategories } from '../services/categoryService';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import TransactionList from '../components/transaction/TransactionList';
+import AddTransactionModal from '../components/transaction/AddTransactionModal';
 
 function TransactionPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -46,13 +48,6 @@ function TransactionPage({ onLogout }) {
     });
     const navigate = useNavigate();
     const location = useLocation();
-    const routes = {
-        dashboard: '/dashboard',
-        transactions: '/transactions',
-        reports: '/reports',
-        budget: '/budget',
-        settings: '/settings',
-    };  
     useEffect(() => {
         const path = location.pathname.split('/')[1] || 'dashboard';
         setActiveNav(path);
@@ -80,90 +75,12 @@ function TransactionPage({ onLogout }) {
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                                 Thêm giao dịch
                         </button>
+                        <AddTransactionModal />
+                    </div>
 
-                        <div
-                            className="modal fade"
-                            id="addModal"
-                            tabIndex="-1"
-                            role="dialog"
-                            aria-labelledby="modalTitleId"
-                            aria-hidden="true"
-                        >
-                            <div className="modal-dialog" role="document">
-                                <div className="modal-content">
-                                    <div className="modal-header">
-                                        <h5 className="modal-title" id="modalTitleId">
-                                            Thêm giao dịch mới
-                                        </h5>
-                                        <button
-                                            type="button"
-                                            className="btn-close"
-                                            data-bs-dismiss="modal"
-                                            aria-label="Close"
-                                        ></button>
-                                    </div>
-                                    <div className="modal-body">
-                                        <div className="container">
-                                            <form>
-                                                <div className="mb-3 row">
-                                                    <label
-                                                        htmlFor="inputName"
-                                                        className="col-3 col-form-label"
-                                                        >Name</label
-                                                    >
-                                                    <div
-                                                        className="col-9"
-                                                    >
-                                                        <input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="inputName"
-                                                            id="inputName"
-                                                            placeholder="Name"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="mb-3 row">
-                                                    
-                                                </div>
-                                            </form>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            data-bs-dismiss="modal"
-                                        >
-                                            Close
-                                        </button>
-                                        <button type="button" className="btn btn-primary">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-                    {/* Transaction list */}
-                    <div className="transaction-list">
-                        {transactions.map(tx => (
-                            <div key={tx.trans_id} className="transaction-item d-flex align-items-center justify-content-between p-3 mb-2 rounded shadow-sm">
-                                <div className="d-flex align-items-center gap-3">   
-                                    <div>
-                                        <div className="transaction-note font-headline">{tx.note}</div>
-                                        <div className="transaction-date text-muted" style={{ fontSize: '14px' }}>{new Date(tx.tx_date).toLocaleDateString()}</div>
-                                    </div>
-                                </div>
-                                <div className={`transaction-amount ${tx.tx_type === 'expense' ? 'expense' : 'income'}`}>
-                                    {tx.tx_type === 'expense' ? '-' : '+'}{tx.amount?.toLocaleString('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND'
-                                    })}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+
+                    {/* List giao dịch */}
+                    <TransactionList transactions={transactions} />
                 </main>
             </div>
         </div>

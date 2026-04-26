@@ -2,12 +2,17 @@ import { supabase } from '../config/supabase'
 export const getTransactions = async () => {
     const { data, error } = await supabase
         .from('transactions')
-        .select('*')
+        .select(`*,
+        categories ( category_name ),
+        wallets ( wallet_name )`)
     if (error) {
         console.error('Error fetching transactions:', error)
         throw error
     }
-    return data
+    return data.map(tx => ({...tx,
+        categoryName: tx.categories?.category_name || 'Uncategorized',
+        walletName: tx.wallets?.wallet_name || 'Unknown Wallet'
+    }));
 }
 export const addTransaction = async (transaction) => {
     const { data, error } = await supabase
