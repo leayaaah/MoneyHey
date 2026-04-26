@@ -1,49 +1,53 @@
 import React from 'react';
-
+import '../../css/TransactionPage.css';
 const TransactionList = ({ transactions }) => {
     if (!transactions || transactions.length === 0) {
         return <div className="text-muted">Chưa có giao dịch nào</div>;
     }
 
     return (
-        <div className="transaction-list">
+        <div className="transaction-grid">
+            {/* header */}
+            <div className="transaction-grid-header">
+                <div>Ghi chú</div>
+                <div>Ngày</div>
+                <div>Danh mục</div>
+                <div>Ví</div>
+                <div>Số tiền</div>
+                <div>#</div>
+            </div>
+
+            {/* rows */}
             {transactions.map(tx => (
-                <div
-                    key={tx.trans_id}
-                    className="transaction-item d-flex align-items-center justify-content-between p-3 mb-2 rounded bg-light "
-                >
-                    <div className="d-flex align-items-center gap-3">
-                        <div>
-                            <div className="transaction-note font-headline">
-                                {tx.note}
-                            </div>
-                            <div
-                                className="transaction-date text-muted"
-                                style={{ fontSize: '14px' }}
-                            >
-                                {new Date(tx.tx_date).toLocaleDateString()}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="d-flex flex-column align-items-start gap-1">
-                        <div className="transaction-category badge bg-secondary">
-                            {tx.categoryName}
-                        </div>
+                <div key={tx.trans_id} className="transaction-grid-row">
+                    
+                    <div className="font-headline">{tx.note}</div>
+
+                    <div className="text-muted">
+                        {new Date(tx.tx_date).toLocaleDateString()}
                     </div>
 
-                    <div className={`transaction-amount ${tx.tx_type === 'expense' ? 'expense' : 'income'}`}>
+                    <div>
+                        <span className="badge bg-secondary">
+                            {tx.categoryName}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span className="badge bg-info">
+                            {tx.walletName}
+                        </span>
+                    </div>
+
+                    <div className={tx.tx_type === 'expense' ? 'text-danger' : 'text-success'}>
                         {tx.tx_type === 'expense' ? '-' : '+'}
                         {tx.amount?.toLocaleString('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
                         })}
                     </div>
-                    <div>
-                        <div className="transaction-wallet badge bg-info">
-                            {tx.walletName}
-                        </div>
-                    </div>
-                    <div>
+
+                    <div className="text-end">
                         <button className="btn btn-outline-primary btn-sm">
                             Sửa
                         </button>
@@ -51,6 +55,7 @@ const TransactionList = ({ transactions }) => {
                             Xóa
                         </button>
                     </div>
+
                 </div>
             ))}
         </div>

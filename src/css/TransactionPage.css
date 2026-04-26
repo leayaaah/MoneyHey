@@ -372,3 +372,38 @@
 .filter-bar .filter-group{
     width: 30%;
 }
+.transaction-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.transaction-grid-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr 0.5fr;
+    font-weight: 600;
+    padding: 8px 12px;
+    background-color: var(--emerald-primary);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+
+.transaction-grid-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.2fr;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+
+.transaction-grid-row:hover {
+    background: var(--qa-color);
+}

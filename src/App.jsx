@@ -11,7 +11,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import './App.css'
 
 function App() {
-  const { isLoggedIn, setIsLoggedIn, handleLogout } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, logout } = useAuth();
 
   return (
     <Routes>
@@ -23,7 +23,7 @@ function App() {
       <Route path='/explore'   element={<ExplorePage />} />
 
       <Route element={<ProtectedRoute isAuthenticated={isLoggedIn} />}>
-        <Route path='/dashboard' element={<DashboardPage onLogout={handleLogout} />} />
+        <Route path='/dashboard' element={<DashboardPage onLogout={logout} />} />
         <Route path='/transactions' element={<TransactionPage />}/>
       </Route>
 
