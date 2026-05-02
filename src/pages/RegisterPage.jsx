@@ -17,7 +17,7 @@ const RegisterPage = () => {
                     <div className="row justify-content-center">
                         <div className="col-12 col-xl-10">
 
-                            <div className="register-card bg-white d-flex flex-column flex-md-row">
+                            <div className="register-card app-card d-flex flex-column flex-md-row">
 
                                 <div className="col-md-6 emerald-gradient d-none d-md-flex flex-column justify-content-center align-items-center text-center p-5 position-relative text-white">
                                     <div className="position-absolute top-0 start-0 p-5 opacity-25">
@@ -33,7 +33,7 @@ const RegisterPage = () => {
                                         <div className="mt-2">
                                             <p className="small opacity-75 mb-3">Đã có tài khoản?</p>
                                             <button
-                                                className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline"
+                                                className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline app-glass"
                                                 style={{borderWidth: '2px'}}
                                                 onClick={() => navigate('/login')}
                                             >
@@ -43,7 +43,7 @@ const RegisterPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="col-md-6 d-flex align-items-center bg-white">
+                                <div className="col-md-6 d-flex align-items-center app-surface">
                                     <RegisterForm />
                                 </div>
 

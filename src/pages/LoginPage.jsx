@@ -16,9 +16,9 @@ const LoginPage = () => {
                     <div className="row justify-content-center">
                         <div className="col-12 col-xl-10">
 
-                            <div className="login-card bg-white d-flex flex-column flex-md-row">
+                            <div className="login-card app-card d-flex flex-column flex-md-row">
 
-                                <div className="col-md-6 d-flex align-items-center bg-white">
+                                <div className="col-md-6 d-flex align-items-center app-surface">
                                     <LoginForm />
                                 </div>
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
                                         
                                         <div className="mt-2">
                                             <p className="small opacity-75 mb-3">Chưa có tài khoản?</p>
-                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline" style={{borderWidth: '2px'}} onClick={() => {navigate('/register')}}>
+                                            <button className="btn btn-outline-light rounded-pill px-5 py-2 fw-bold font-headline app-glass" style={{borderWidth: '2px'}} onClick={() => {navigate('/register')}}>
                                                 Đăng ký ngay
                                             </button>
                                         </div>
