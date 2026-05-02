@@ -1,104 +1,113 @@
-/* ─── Filters / content shell ─────────────────────────────── */
-.transaction-content{
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: none;
-    background: color-mix(in srgb, var(--color-surfaceContainer, #e6e8eb) 70%, transparent);
-}
-
-.filter-bar {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    background: var(--color-surfaceContainerLowest, #ffffff);
-    padding: 14px 16px;
-    border-radius: 16px;
-    margin-bottom: 18px;
-    box-shadow: 0 24px 48px rgba(44, 47, 49, 0.06);
-}
-
-.filter-group {
+/* ─── Shell layout ─────────────────────────────────────────── */
+.transaction-shell {
     display: flex;
     flex-direction: column;
-    font-size: 12px;
-    gap: 6px;
+    min-height: 100vh;
+    background: var(--color-background, var(--surface-bg));
 }
 
-.filter-group label{
-    color: var(--color-onSurfaceVariant, #595c5e);
-    font-weight: 700;
-    letter-spacing: 0.01em;
+.transaction-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
 }
 
-.filter-group input,
-.filter-group select {
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: none; /* No-Line */
-    background: var(--color-surfaceContainer, #e6e8eb);
-    font-size: 13px;
-    color: var(--color-onSurface, #2c2f31);
-    outline: none;
-    transition: background-color 0.2s, box-shadow 0.2s;
+/* Keep sidebar rules here too (shared component) */
+.sidebar.sidebar-open {
+    width: 220px;
 }
 
-.filter-group input:focus,
-.filter-group select:focus {
-    background: var(--color-surfaceContainerHigh, #e0e3e5);
-    box-shadow: inset 0 -2px 0 0 var(--color-primary, #006948);
+@media (max-width: 767px) {
+    .sidebar {
+        position: fixed;
+        top: 64px;
+        left: 0;
+        bottom: 0;
+        z-index: 99;
+        width: 0;
+    }
+
+    .sidebar.sidebar-open {
+        width: 240px;
+    }
+
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.3);
+        z-index: 98;
+    }
 }
 
-.btn-reset {
-    align-self: flex-end;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: none;
-    background: var(--color-surfaceContainer, #e6e8eb);
-    cursor: pointer;
-    font-weight: 700;
-    color: var(--color-onSurface, #2c2f31);
-    transition: transform 0.15s, background-color 0.15s;
-}
-
-.btn-reset:hover {
-    background: var(--color-surfaceContainerHigh, #e0e3e5);
-    transform: translateY(-1px);
-}
-
-/* ─── Grid / table-like list ──────────────────────────────── */
-.transaction-grid {
+.sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 2px;
+    padding: 8px;
 }
 
-.transaction-grid-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr 0.5fr;
-    font-weight: 800;
-    padding: 12px 14px;
-    background: linear-gradient(
-        135deg,
-        var(--color-primary, #006948) 0%,
-        var(--color-primaryContainer, #8cfeca) 100%
-    );
-    color: var(--color-onPrimary, #c8ffe1);
-    border-radius: 16px;
-    box-shadow: 0 24px 48px rgba(44, 47, 49, 0.10);
-}
-
-.transaction-grid-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.2fr;
+.sidebar-nav-item {
+    display: flex;
     align-items: center;
-    padding: 14px;
-    background: var(--color-surfaceContainerLowest, #ffffff);
-    border-radius: 16px;
-    box-shadow: 0 18px 36px rgba(44, 47, 49, 0.06);
-    transition: transform 0.15s, background-color 0.15s;
+    gap: 12px;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    border-radius: 0.625rem;
+    color: var(--color-onSurfaceVariant, var(--text-variant));
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    width: 100%;
+    text-align: left;
 }
 
-.transaction-grid-row:hover {
-    transform: translateY(-1px);
-    background: color-mix(in srgb, var(--color-primary, #006948) 3%, var(--color-surfaceContainerLowest, #ffffff));
+.sidebar-nav-item:hover {
+    background: var(--color-surfaceContainer, var(--surface-bg));
+    color: var(--color-onSurface, var(--text-main));
+}
+
+.sidebar-nav-item.active {
+    background: color-mix(in srgb, var(--color-primary, var(--emerald-primary)) 10%, transparent);
+    color: var(--color-primary, var(--emerald-primary));
+    font-weight: 800;
+}
+
+.sidebar-nav-item .material-symbols-outlined {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* ─── Main content ────────────────────────────────────────── */
+.transaction-main {
+    flex: 1;
+    padding: 1.5rem 1.75rem;
+    overflow-y: auto;
+    transition: margin-left 0.25s ease;
+    min-width: 0;
+}
+
+/* ─── Page title ──────────────────────────────────────────── */
+.page-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-onSurface, var(--text-main));
+    margin: 0 0 0.25rem;
+}
+
+.page-subtitle {
+    font-size: 0.8125rem;
+    color: var(--color-onSurfaceVariant, var(--text-variant));
+    margin: 0;
 }
