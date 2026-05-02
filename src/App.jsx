@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import ExplorePage from './pages/ExplorePage'
 import TransactionPage from './pages/TransactionPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import ReportPage from './pages/ReportPage'
 
 import './App.css'
 
@@ -25,6 +26,7 @@ function App() {
       <Route element={<ProtectedRoute isAuthenticated={isLoggedIn} />}>
         <Route path='/dashboard' element={<DashboardPage onLogout={logout} />} />
         <Route path='/transactions' element={<TransactionPage />}/>
+        <Route path='/reports' element={<ReportPage onLogout={logout} />} />
       </Route>
 
       <Route path='/' 
