@@ -3,39 +3,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap'); */
 
 :root {
-    /* Legacy emerald tokens (kept for compatibility with existing CSS) */
     --emerald-primary: #006948;
     --emerald-dim: #005b3f;
     --emerald-light: #8cfeca;
     --surface-bg: #f5f6f8;
     --text-main: #2c2f31;
     --text-variant: #595c5e;
-
-    /* Theme.js tokens (default values; ThemeProvider will overwrite at runtime) */
-    --color-primary: #006948;
-    --color-primaryDim: #005b3f;
-    --color-primaryContainer: #8cfeca;
-    --color-surface: #f5f6f8;
-    --color-background: #f5f6f8;
-    --color-onBackground: #2c2f31;
-    --color-onSurface: #2c2f31;
-    --color-onSurfaceVariant: #595c5e;
-    --color-surfaceContainerLowest: #ffffff;
-    --color-surfaceContainer: #e6e8eb;
-    --color-surfaceContainerHigh: #e0e3e5;
-    --color-surfaceContainerHighest: #dadde0;
-    --color-outlineVariant: #abadaf;
-    --color-onPrimary: #c8ffe1;
-    --color-onPrimaryContainer: #006243;
 }
 
-/* ────────────────────────────────────────────────────────────
-   Base
-   ──────────────────────────────────────────────────────────── */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--color-background, var(--surface-bg));
-    color: var(--color-onBackground, var(--text-main));
+    background-color: var(--surface-bg);
+    color: var(--text-main);
     min-height: 100vh;
     margin: 0;
 }
@@ -44,45 +23,8 @@ h1, h2, .font-headline {
     font-family: 'Manrope', sans-serif;
 }
 
-/* ────────────────────────────────────────────────────────────
-   Emerald Editorial utility classes (Approach B)
-   Use these in pages instead of Bootstrap bg/text helpers.
-   ──────────────────────────────────────────────────────────── */
-.app-surface {
-    background: var(--color-surfaceContainerLowest);
-    color: var(--color-onSurface);
-}
-
-.app-surface-muted {
-    background: var(--color-surfaceContainer);
-    color: var(--color-onSurface);
-}
-
-.app-text-muted {
-    color: var(--color-onSurfaceVariant) !important;
-}
-
-/* "No-Line" principle: avoid 1px borders; use tonal separation */
-.app-card {
-    background: var(--color-surfaceContainerLowest);
-    border-radius: 1.25rem;
-    box-shadow: 0 24px 48px rgba(44, 47, 49, 0.06);
-}
-
-/* Gradient soul for hero areas */
 .emerald-gradient {
-    background: linear-gradient(
-        135deg,
-        var(--color-primary, var(--emerald-primary)) 0%,
-        var(--color-primaryContainer, var(--emerald-light)) 100%
-    );
-}
-
-/* Glassmorphism (for buttons on gradient backgrounds) */
-.app-glass {
-    background: color-mix(in srgb, var(--color-onPrimary) 18%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-light) 100%);
 }
 
 .material-symbols-outlined {

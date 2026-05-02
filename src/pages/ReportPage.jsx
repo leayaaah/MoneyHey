@@ -81,30 +81,26 @@ function ReportPage({ onLogout }) {
     // summary
 
 
-
     const getCategorySummary = (transactions, type) => {
-        const map = {};
+    const map = {};
 
-        transactions
-            .filter(tx => tx.tx_type === type)
-            .forEach(tx => {
-                const key = tx.categoryName || "Khác";
+    transactions
+        .filter(tx => tx.tx_type === type)
+        .forEach(tx => {
+            const key = tx.categoryName || "Khác";
 
-                if (!map[key]) {
-                    map[key] = 0;
-                }
+            if (!map[key]) {
+                map[key] = 0;
+            }
 
-                map[key] += Number(tx.amount);
-            });
+            map[key] += Number(tx.amount);
+        });
 
-        return Object.keys(map).map(k => ({
-            name: k,
-            value: map[k]
-        }));
-    };
-
-    const expenseData = getCategorySummary(transactions, 'expense');
-    const incomeData = getCategorySummary(transactions, 'income');  
+    return Object.keys(map).map(k => ({
+        name: k,
+        value: map[k]
+    }));
+};
 
 
     return (
@@ -116,74 +112,16 @@ function ReportPage({ onLogout }) {
                 <Sidebar open={sidebarOpen}/>
 
                 <main className={`report-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
-
-                    <div className="report-content">
-
-                        {/* TITLE */}
-                        <div className="page-title-row">
-                            <div>
-                                <h1 className="page-title font-headline">Báo cáo</h1>
-                                <p className="page-subtitle">{formattedDate}</p>
-                            </div>
-                        </div>
-
-                        {/* ===== SUMMARY CARDS ===== */}
-                        <div className="summary-grid">
-
-                            <div className="summary-card income">
-                                <div className="summary-label">Tổng thu</div>
-                                <div className="summary-value text-success">
-                                    +{transactions
-                                        .filter(tx => tx.tx_type === 'income')
-                                        .reduce((s, tx) => s + Number(tx.amount), 0)
-                                        .toLocaleString('vi-VN')} đ
-                                </div>
-                            </div>
-
-                            <div className="summary-card expense">
-                                <div className="summary-label">Tổng chi</div>
-                                <div className="summary-value text-danger">
-                                    -{transactions
-                                        .filter(tx => tx.tx_type === 'expense')
-                                        .reduce((s, tx) => s + Number(tx.amount), 0)
-                                        .toLocaleString('vi-VN')} đ
-                                </div>
-                            </div>
-
-                            <div className="summary-card balance">
-                                <div className="summary-label">Số dư</div>
-                                <div className="summary-value">
-                                    {(transactions.reduce((s, tx) =>
-                                        tx.tx_type === 'income'
-                                            ? s + Number(tx.amount)
-                                            : s - Number(tx.amount), 0)
-                                    ).toLocaleString('vi-VN')} đ
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {/* ===== CHARTS ===== */}
-                        <div className="row g-4 mt-2">
-
-                            <div className="col-12 col-xl-6">
-                                <div className="report-card">
-                                    <h5 className="report-card-title">Chi tiêu theo danh mục</h5>
-                                    <ExpensePieChart data={expenseData} />
-                                </div>
-                            </div>
-
-                            <div className="col-12 col-xl-6">
-                                <div className="report-card">
-                                    <h5 className="report-card-title">Thu nhập theo danh mục</h5>
-                                    <ExpensePieChart data={incomeData} />
-                                </div>
-                            </div>
-
-                        </div>
-
+                    <div className='report-content'>
+                        <h1 className="report-title">Báo cáo chi tiêu</h1>
+                        <ExpensePieChart data={getCategorySummary(transactions)} />
                     </div>
-
+                    
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
                 </main>
             </div>
         </div>
