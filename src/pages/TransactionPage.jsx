@@ -10,6 +10,7 @@ import TransactionList from '../components/transaction/TransactionList';
 import AddTransactionModal from '../components/transaction/AddTransactionModal';
 import TransactionFilter from '../components/transaction/TransactionFilter';
 import '../css/TransactionPage.css';
+import Pagination from '../components/common/Pagination';
 
 function TransactionPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -22,6 +23,12 @@ function TransactionPage({ onLogout }) {
         toDate: '',
         category: 'all'
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 2;
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
+
 
 
     useEffect(() => {
@@ -70,6 +77,14 @@ function TransactionPage({ onLogout }) {
         return true;
     });
     
+
+    // pageination
+    const indexOfLast = currentPage * itemsPerPage;
+    const indexOfFirst = indexOfLast - itemsPerPage;
+    const currentTransactions = filteredTransactions.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+
+    
     
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
@@ -105,9 +120,13 @@ function TransactionPage({ onLogout }) {
                     <div className="transaction-content">
                         <TransactionFilter filters={filters} setFilters={setFilters} categories={categories} />
                         {/* List giao dịch */}
-                        <TransactionList transactions={filteredTransactions} />
+                        <TransactionList transactions={currentTransactions} />
                     </div>
-                    
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
                 </main>
             </div>
         </div>
