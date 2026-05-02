@@ -53,9 +53,9 @@ const DashboardPage = ({ onLogout }) => {
                     <div className="page-title-row">
                         <div>
                             <h1 className="page-title font-headline">Tổng quan</h1>
-                            <p className="page-subtitle">{formattedDate}</p>
+                            <p className="page-subtitle app-text-muted">{formattedDate}</p>
                         </div>
-                        <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                        <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 font-headline">
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                             Thêm giao dịch
                         </button>

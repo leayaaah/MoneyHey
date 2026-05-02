@@ -1,215 +1,8 @@
-/* ─── Shell layout ─────────────────────────────────────────── */
-.dashboard-shell {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background: var(--surface-bg);
-}
-
-.dashboard-body {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-/* ─── Sidebar ─────────────────────────────────────────────── */
-.sidebar {
-    width: 0;
-    overflow: hidden;
-    background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.07);
-    transition: width 0.25s ease;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar.sidebar-open {
-    width: 220px;
-}
-
-@media (max-width: 767px) {
-    .sidebar {
-        position: fixed;
-        top: 64px;
-        left: 0;
-        bottom: 0;
-        z-index: 99;
-        width: 0;
-    }
-
-    .sidebar.sidebar-open {
-        width: 240px;
-    }
-
-    .sidebar-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.3);
-        z-index: 98;
-    }
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 8px;
-}
-
-.sidebar-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    border: none;
-    background: none;
-    border-radius: 0.625rem;
-    color: var(--text-variant);
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    width: 100%;
-    text-align: left;
-}
-
-.sidebar-nav-item:hover {
-    background: var(--surface-bg);
-    color: var(--text-main);
-}
-
-.sidebar-nav-item.active {
-    background: rgba(0, 105, 72, 0.08);
-    color: var(--emerald-primary);
-    font-weight: 700;
-}
-
-.sidebar-nav-item .material-symbols-outlined {
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-/* ─── Main content ────────────────────────────────────────── */
-.dashboard-main {
-    flex: 1;
-    padding: 1.5rem 1.75rem;
-    overflow-y: auto;
-    transition: margin-left 0.25s ease;
-    min-width: 0;
-}
-
-/* ─── Page title ──────────────────────────────────────────── */
-.page-title-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--text-main);
-    margin: 0 0 0.25rem;
-}
-
-.page-subtitle {
-    font-size: 0.8125rem;
-    color: var(--text-variant);
-    margin: 0;
-}
-
-/* ─── Summary cards grid ──────────────────────────────────── */
-.summary-grid {
-    display: flex;
-    justify-content: space-between;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-
-.summary-card {
-    background: white;
-    width: 25%;
-    border-radius: 1rem;
-    padding: 1.25rem;
-    display: flex;
-    
-    align-items: flex-start;
-    gap: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-}
-
-.summary-card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 22px;
-}
-
-.summary-card-icon .material-symbols-outlined {
-    font-size: 22px;
-}
-
-.card-emerald .summary-card-icon { background: rgba(0,105,72,0.1);  color: var(--emerald-primary); }
-.card-blue   .summary-card-icon { background: rgba(52,152,219,0.1); color: #3498db; }
-.card-red    .summary-card-icon { background: rgba(231,76,60,0.1);  color: #e74c3c; }
-.card-amber  .summary-card-icon { background: rgba(243,156,18,0.1); color: #f39c12; }
-
-.summary-card-body {
-    min-width: 0;
-}
-
-.summary-card-label {
-    font-size: 0.75rem;
-    color: var(--text-variant);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.25rem;
-}
-
-.summary-card-value {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--text-main);
-    font-family: 'Manrope', sans-serif;
-    white-space: nowrap;
-    margin-bottom: 0.25rem;
-}
-
-.summary-card-change {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.change-up   { color: var(--emerald-primary); }
-.change-down { color: #e74c3c; }
-
-/* ─── Generic dash card ───────────────────────────────────── */
 .dash-card {
-    background: white;
+    background: var(--color-surfaceContainerLowest, #ffffff);
     border-radius: 1rem;
     padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: 0 24px 48px rgba(44, 47, 49, 0.06);
 }
 
 .dash-card-header {
@@ -221,7 +14,7 @@
 .dash-card-title {
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
-    color: var(--text-main);
+    color: var(--color-onSurface, var(--text-main));
     margin: 0;
     font-size: 0.9375rem;
 }
@@ -229,8 +22,8 @@
 .badge-month {
     font-size: 0.6875rem;
     font-weight: 700;
-    background: rgba(0,105,72,0.1);
-    color: var(--emerald-primary);
+    background: color-mix(in srgb, var(--color-primary, var(--emerald-primary)) 12%, transparent);
+    color: var(--color-primary, var(--emerald-primary));
     border-radius: 99px;
     padding: 3px 10px;
 }
@@ -241,23 +34,24 @@
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    /* No-Line rule: avoid borders, use subtle tonal separator */
+    box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--color-outlineVariant, #abadaf) 18%, transparent);
 }
 
 .tx-row:last-child {
-    border-bottom: none;
+    box-shadow: none;
 }
 
 .tx-icon {
     width: 38px;
     height: 38px;
     border-radius: 0.6rem;
-    background: var(--surface-bg);
+    background: var(--color-surfaceContainer, var(--surface-bg));
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--text-variant);
+    color: var(--color-onSurfaceVariant, var(--text-variant));
 }
 
 .tx-icon .material-symbols-outlined {
@@ -272,7 +66,7 @@
 .tx-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--text-main);
+    color: var(--color-onSurface, var(--text-main));
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -280,7 +74,7 @@
 
 .tx-meta {
     font-size: 0.75rem;
-    color: var(--text-variant);
+    color: var(--color-onSurfaceVariant, var(--text-variant));
 }
 
 .tx-amount {
@@ -290,8 +84,8 @@
     white-space: nowrap;
 }
 
-.tx-amount.income  { color: var(--emerald-primary); }
-.tx-amount.expense { color: #e74c3c; }
+.tx-amount.income  { color: var(--color-primary, var(--emerald-primary)); }
+.tx-amount.expense { color: var(--color-error, #b31b25); }
 
 /* ─── Quick action buttons ────────────────────────────────── */
 .quick-action-btn {
@@ -301,35 +95,25 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    border: 1.5px solid rgba(0,0,0,0.08);
+    border: none;
     border-radius: 0.75rem;
-    background: white;
-    color: var(--text-main);
+    background: var(--color-surfaceContainerLowest, #ffffff);
+    color: var(--color-onSurface, var(--text-main));
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s;
     flex: 1;
     min-width: 130px;
+    box-shadow: 0 18px 36px rgba(44, 47, 49, 0.06);
 }
 
 .quick-action-btn .material-symbols-outlined {
     font-size: 18px;
-    color: var(--qa-color, var(--emerald-primary));
+    color: var(--qa-color, var(--color-primary, var(--emerald-primary)));
 }
 
 .quick-action-btn:hover {
-    border-color: var(--qa-color, var(--emerald-primary));
-    background: color-mix(in srgb, var(--qa-color, var(--emerald-primary)) 5%, white);
+    background: color-mix(in srgb, var(--qa-color, var(--color-primary, var(--emerald-primary))) 6%, var(--color-surfaceContainerLowest, #ffffff));
     transform: translateY(-1px);
-}
-
-@media screen and (max-width: 767px) {
-    .summary-grid {
-        flex-direction: column;
-    }
-    .summary-card {
-        width: 100%;
-    }
-    
 }
