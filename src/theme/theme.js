@@ -51,3 +51,10 @@ export const colors = {
     inverseSurface: "#0c0f10",
     surfaceVariant: "#dadde0"
 };
+
+// Simple theme export to apply consistently across pages.
+// This repo currently uses Bootstrap + custom CSS, so we expose theme values
+// via CSS variables and a lightweight provider.
+export const theme = {
+  colors,
+};
