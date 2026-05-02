@@ -3,18 +3,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap'); */
 
 :root {
+    /* Legacy emerald tokens (kept for compatibility) */
     --emerald-primary: #006948;
     --emerald-dim: #005b3f;
     --emerald-light: #8cfeca;
     --surface-bg: #f5f6f8;
     --text-main: #2c2f31;
     --text-variant: #595c5e;
+
+    /* Theme.js tokens (default values; ThemeProvider will overwrite on runtime) */
+    --color-primary: #006948;
+    --color-primaryDim: #005b3f;
+    --color-primaryContainer: #8cfeca;
+    --color-background: #f5f6f8;
+    --color-onBackground: #2c2f31;
+    --color-onSurface: #2c2f31;
+    --color-onSurfaceVariant: #595c5e;
+    --color-surface: #f5f6f8;
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--surface-bg);
-    color: var(--text-main);
+    background-color: var(--color-background, var(--surface-bg));
+    color: var(--color-onBackground, var(--text-main));
     min-height: 100vh;
     margin: 0;
 }
@@ -24,7 +35,7 @@ h1, h2, .font-headline {
 }
 
 .emerald-gradient {
-    background: linear-gradient(135deg, var(--emerald-primary) 0%, var(--emerald-light) 100%);
+    background: linear-gradient(135deg, var(--color-primary, var(--emerald-primary)) 0%, var(--color-primaryContainer, var(--emerald-light)) 100%);
 }
 
 .material-symbols-outlined {
