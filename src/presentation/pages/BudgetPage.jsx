@@ -73,8 +73,9 @@ const BudgetPage = ({ onLogout }) => {
 
                     <div className="budget-list">
                         {BUDGET_ITEMS.map(item => {
-                            const percentage = Math.min((item.spent / item.limit) * 100, 100);
-                            const status = getBudgetStatus((item.spent / item.limit) * 100);
+                            const rawPercentage = (item.spent / item.limit) * 100;
+                            const percentage = Math.min(rawPercentage, 100);
+                            const status = getBudgetStatus(rawPercentage);
                             return (
                                 <div key={item.id} className="budget-item">
                                     <div className="budget-item-header">
