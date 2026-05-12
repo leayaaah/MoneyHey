@@ -8,8 +8,15 @@ const chartColors = [
     themeColors.primaryContainer,
     themeColors.secondaryContainer,
     themeColors.tertiaryContainer,
+    themeColors.primaryFixed,
+    themeColors.secondaryFixed,
     themeColors.tertiaryFixed,
-    themeColors.error
+    themeColors.primaryFixedDim,
+    themeColors.secondaryFixedDim,
+    themeColors.tertiaryFixedDim,
+    themeColors.error,
+    themeColors.primaryDim,
+    themeColors.tertiaryDim
 ];
 
 const BORDER_DARKEN_AMOUNT = 0.2; // Subtle darken for slice borders.
