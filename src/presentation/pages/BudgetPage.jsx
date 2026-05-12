@@ -73,9 +73,12 @@ const BudgetPage = ({ onLogout }) => {
 
                     <div className="budget-list">
                         {BUDGET_ITEMS.map(item => {
-                            const rawPercentage = (item.spent / item.limit) * 100;
+                            const rawPercentage = item.limit > 0
+                                ? (item.spent / item.limit) * 100
+                                : 0;
                             const percentage = Math.min(rawPercentage, 100);
                             const status = getBudgetStatus(rawPercentage);
+                            const remaining = item.limit - item.spent;
                             return (
                                 <div key={item.id} className="budget-item">
                                     <div className="budget-item-header">
@@ -97,7 +100,7 @@ const BudgetPage = ({ onLogout }) => {
                                     </div>
                                     <div className="budget-item-footer">
                                         <span>Đã chi: {item.spent.toLocaleString('vi-VN')} đ</span>
-                                        <span>Còn lại: {(item.limit - item.spent).toLocaleString('vi-VN')} đ</span>
+                                        <span>Còn lại: {remaining.toLocaleString('vi-VN')} đ</span>
                                     </div>
                                 </div>
                             );
