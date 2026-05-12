@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../../css/LoginForm.css';
-import { signIn } from '../../../application/services/authService';
+import { setRememberSession, signIn } from '../../../application/services/authService';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -52,6 +52,7 @@ const LoginForm = () => {
             setErrors(validationErrors);
             return;
         }
+        setRememberSession(formData.rememberMe);
         const { data: authData, error: authError } = await signIn(formData.email, formData.password);
         if (authError) {
             console.error("Lỗi rồi:", authError.message);
@@ -61,9 +62,6 @@ const LoginForm = () => {
             }
         } else {
             console.log("Đăng nhập thành công!", authData);
-            if (formData.rememberMe) {
-                localStorage.setItem('moneyhey_session', JSON.stringify(authData.session));
-            }
             await login();
         }
     };

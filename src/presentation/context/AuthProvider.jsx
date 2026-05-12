@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getUser, setSession, signOut } from '../../application/services/authService';
+import { getUser, signOut } from '../../application/services/authService';
 import { getProfile } from '../../application/services/profileService';
 
 export const AuthContext = createContext();
@@ -12,20 +12,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const initAuth = async () => {
             try {
-
-                const savedSession = localStorage.getItem('moneyhey_session');
-
-                if (savedSession) {
-                    const session = JSON.parse(savedSession);
-                    const isExpired = session.expires_at * 1000 < Date.now();
-
-                    if (!isExpired) {
-                        await setSession(session);
-                    } else {
-                        localStorage.removeItem('moneyhey_session');
-                    }
-                }
-
 
                 const { data: authData } = await getUser();
 
@@ -77,7 +63,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        localStorage.removeItem('moneyhey_session');
         await signOut();
         setUser(null);
         setIsLoggedIn(false);
