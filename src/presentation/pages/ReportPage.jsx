@@ -6,6 +6,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../../css/ReportPage.css';
 import ExpensePieChart from '../components/report/ExpensePieChart';
 
+const normalizeType = (type) => (type || '').toString().toLowerCase();
+
 function ReportPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [transactions, setTransactions] = useState([]);
@@ -25,8 +27,6 @@ function ReportPage({ onLogout }) {
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
-
-    const normalizeType = (type) => (type || '').toString().toLowerCase();
 
     const getCategorySummary = (transactions, type) => {
         const map = {};
