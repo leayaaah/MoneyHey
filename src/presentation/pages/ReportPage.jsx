@@ -5,6 +5,8 @@ import { fetchTransactions } from '../../application/services/transactionService
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../../css/ReportPage.css';
 import ExpensePieChart from '../components/report/ExpensePieChart';
+import ExpenseBarChart from '../components/report/ExpenseBarChart';
+import ExpenseLineChart from '../components/report/ExpenseLineChart';
 
 const normalizeType = (type) => (type || '').toString().toLowerCase();
 
@@ -50,7 +52,6 @@ function ReportPage({ onLogout }) {
     };
 
     const expenseData = getCategorySummary(transactions, 'expense');
-    const incomeData = getCategorySummary(transactions, 'income');  
 
 
     return (
@@ -112,17 +113,24 @@ function ReportPage({ onLogout }) {
                         {/* ===== CHARTS ===== */}
                         <div className="row g-4 mt-2">
 
-                            <div className="col-12 col-xl-6">
+                            <div className="col-12">
                                 <div className="report-card">
-                                    <h5 className="report-card-title">Chi tiêu theo danh mục</h5>
+                                    <h5 className="report-card-title">Tỷ trọng chi tiêu theo danh mục</h5>
                                     <ExpensePieChart data={expenseData} />
                                 </div>
                             </div>
 
                             <div className="col-12 col-xl-6">
                                 <div className="report-card">
-                                    <h5 className="report-card-title">Thu nhập theo danh mục</h5>
-                                    <ExpensePieChart data={incomeData} />
+                                    <h5 className="report-card-title">Chi tiêu tuyệt đối theo danh mục</h5>
+                                    <ExpenseBarChart data={expenseData} />
+                                </div>
+                            </div>
+
+                            <div className="col-12 col-xl-6">
+                                <div className="report-card">
+                                    <h5 className="report-card-title">Xu hướng chi tiêu 6 tháng gần nhất</h5>
+                                    <ExpenseLineChart />
                                 </div>
                             </div>
 

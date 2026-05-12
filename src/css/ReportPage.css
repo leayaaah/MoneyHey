@@ -303,11 +303,24 @@
 }
 
 .chart-wrapper {
-    height: 280px;
+    width: 100%;
+}
+
+.chart-wrapper--compact {
+    height: 220px;
+    width: calc(100% - 32px);
+    margin: 0 auto;
+}
+
+.chart-wrapper--medium {
+    height: 240px;
+}
+
+.chart-wrapper--tall {
+    height: 260px;
 }
 
 .chart-empty {
-    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -320,9 +333,32 @@
     font-size: 0.875rem;
 }
 
+.chart-empty--compact {
+    height: 220px;
+}
+
+.chart-empty--medium {
+    height: 240px;
+}
+
+.chart-empty--tall {
+    height: 260px;
+}
+
 @media screen and (max-width: 767px) {
-    .chart-wrapper,
-    .chart-empty {
+    .chart-wrapper--compact,
+    .chart-empty--compact {
+        height: 200px;
+        width: 100%;
+    }
+
+    .chart-wrapper--medium,
+    .chart-empty--medium {
+        height: 220px;
+    }
+
+    .chart-wrapper--tall,
+    .chart-empty--tall {
         height: 240px;
     }
 }
