@@ -12,8 +12,8 @@ const chartColors = [
     themeColors.error
 ];
 
-const BORDER_DARKEN_AMOUNT = 0.2;
-const ARC_LABEL_DARKEN_AMOUNT = 2;
+const BORDER_DARKEN_FACTOR = 0.2;
+const ARC_LABEL_DARKEN_FACTOR = 2;
 
 const chartTheme = {
     text: {
@@ -63,13 +63,13 @@ const ExpensePieChart = ({ data }) => {
                 activeOuterRadiusOffset={8}
                 colors={chartColors}
                 borderWidth={1}
-                borderColor={{ from: 'color', modifiers: [['darker', BORDER_DARKEN_AMOUNT]] }}
+                borderColor={{ from: 'color', modifiers: [['darker', BORDER_DARKEN_FACTOR]] }}
                 arcLinkLabelsSkipAngle={10}
                 arcLinkLabelsTextColor={themeColors.onSurfaceVariant}
                 arcLinkLabelsThickness={2}
                 arcLinkLabelsColor={{ from: 'color' }}
                 arcLabelsSkipAngle={10}
-                arcLabelsTextColor={{ from: 'color', modifiers: [['darker', ARC_LABEL_DARKEN_AMOUNT]] }}
+                arcLabelsTextColor={{ from: 'color', modifiers: [['darker', ARC_LABEL_DARKEN_FACTOR]] }}
                 legends={[
                     {
                         anchor: 'bottom',
