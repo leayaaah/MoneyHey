@@ -113,7 +113,8 @@ function TransactionPage({ onLogout }) {
                         <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm"
                             type="button"
                             data-bs-toggle="modal" 
-                            data-bs-target="#addModal">
+                            data-bs-target="#addModal"
+                            data-bs-focus="false">
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                                 Thêm giao dịch
                         </button>
