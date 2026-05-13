@@ -8,6 +8,7 @@ import ExplorePage from './presentation/pages/ExplorePage'
 import TransactionPage from './presentation/pages/TransactionPage'
 import ProtectedRoute from './presentation/components/auth/ProtectedRoute'
 import ReportPage from './presentation/pages/ReportPage'
+import BudgetPage from './presentation/pages/BudgetPage'
 
 import './App.css'
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='/dashboard' element={<DashboardPage onLogout={logout} />} />
         <Route path='/transactions' element={<TransactionPage />}/>
         <Route path='/reports' element={<ReportPage onLogout={logout} />} />
+        <Route path='/budget' element={<BudgetPage onLogout={logout} />} />
       </Route>
 
       <Route path='/' 
