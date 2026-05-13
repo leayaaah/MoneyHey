@@ -118,6 +118,18 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         setCategoryForm(createCategoryState());
     };
 
+    const resolveCategoryTxType = (target) => {
+        if (!target || target.kind === 'manual') {
+            return formData.tx_type || 'expense';
+        }
+
+        if (target.kind === 'quick-preview') {
+            return previewTransactions[target.index]?.tx_type || 'expense';
+        }
+
+        return 'expense';
+    };
+
     const attachCategoryToTarget = (createdCategory, target) => {
         if (!target) {
             return;
@@ -164,7 +176,10 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
         try {
             setIsCreatingCategory(true);
-            const createdCategory = await createCategory(categoryName);
+            const createdCategory = await createCategory({
+                categoryName,
+                txType: resolveCategoryTxType(categoryForm.target)
+            });
             const nextCategories = [...categoryOptions, createdCategory];
 
             setCategoryOptions(nextCategories);
@@ -173,7 +188,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
             closeCategoryCreator();
         } catch (error) {
             console.error('Lỗi khi tạo category:', error);
-            setCategoryError('Không thể tạo category mới.');
+            setCategoryError(error?.message || 'Không thể tạo category mới.');
         } finally {
             setIsCreatingCategory(false);
         }
@@ -627,6 +642,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 };
 
 export default AddTransactionModal;
+
 
 
 
