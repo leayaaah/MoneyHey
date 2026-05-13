@@ -1,9 +1,10 @@
 import { ResponsivePie } from '@nivo/pie';
 import { colors as themeColors } from '../../../theme/theme';
+import { formatCompactVnd } from '../../utils/formatCurrency';
 
 const BORDER_DARKEN_AMOUNT = 0.2; // Subtle darken for slice borders.
 const ARC_LABEL_DARKEN_AMOUNT = 2; // Stronger contrast for readable labels.
-const formatCurrency = (value) => `$${Number(value).toLocaleString('en-US')}`;
+const formatCurrency = (value) => formatCompactVnd(value);
 
 const chartTheme = {
     text: {

@@ -7,6 +7,7 @@ import '../../css/ReportPage.css';
 import ExpensePieChart from '../components/report/ExpensePieChart';
 import ExpenseBarChart from '../components/report/ExpenseBarChart';
 import ExpenseLineChart from '../components/report/ExpenseLineChart';
+import { formatCompactVnd } from '../utils/formatCurrency';
 
 const normalizeType = (type) => (type || '').toString().toLowerCase();
 
@@ -29,6 +30,20 @@ function ReportPage({ onLogout }) {
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+
+    const totalIncome = transactions
+        .filter(tx => normalizeType(tx.tx_type) === 'income')
+        .reduce((sum, tx) => sum + Number(tx.amount), 0);
+    const totalExpense = transactions
+        .filter(tx => normalizeType(tx.tx_type) === 'expense')
+        .reduce((sum, tx) => sum + Number(tx.amount), 0);
+    const totalBalance = transactions.reduce((sum, tx) =>
+        normalizeType(tx.tx_type) === 'income'
+            ? sum + Number(tx.amount)
+            : sum - Number(tx.amount), 0);
+    const formattedIncome = formatCompactVnd(totalIncome);
+    const formattedExpense = formatCompactVnd(totalExpense);
+    const formattedBalance = formatCompactVnd(Math.abs(totalBalance));
 
     const getCategorySummary = (transactions, type) => {
         const map = {};
@@ -77,34 +92,35 @@ function ReportPage({ onLogout }) {
                         {/* ===== SUMMARY CARDS ===== */}
                         <div className="summary-grid">
 
-                            <div className="summary-card income">
-                                <div className="summary-label">Tổng thu</div>
-                                <div className="summary-value text-success">
-                                    +{transactions
-                                        .filter(tx => normalizeType(tx.tx_type) === 'income')
-                                        .reduce((s, tx) => s + Number(tx.amount), 0)
-                                        .toLocaleString('vi-VN')} đ
+                            <div className="summary-card card-emerald">
+                                <div className="summary-card-icon">
+                                    <span className="material-symbols-outlined">trending_up</span>
+                                </div>
+                                <div className="summary-card-body">
+                                    <div className="summary-card-label">Tổng thu</div>
+                                    <div className="summary-card-value text-success">+{formattedIncome}</div>
                                 </div>
                             </div>
 
-                            <div className="summary-card expense">
-                                <div className="summary-label">Tổng chi</div>
-                                <div className="summary-value text-danger">
-                                    -{transactions
-                                        .filter(tx => normalizeType(tx.tx_type) === 'expense')
-                                        .reduce((s, tx) => s + Number(tx.amount), 0)
-                                        .toLocaleString('vi-VN')} đ
+                            <div className="summary-card card-red">
+                                <div className="summary-card-icon">
+                                    <span className="material-symbols-outlined">trending_down</span>
+                                </div>
+                                <div className="summary-card-body">
+                                    <div className="summary-card-label">Tổng chi</div>
+                                    <div className="summary-card-value text-danger">-{formattedExpense}</div>
                                 </div>
                             </div>
 
-                            <div className="summary-card balance">
-                                <div className="summary-label">Số dư</div>
-                                <div className="summary-value">
-                                    {(transactions.reduce((s, tx) =>
-                                        normalizeType(tx.tx_type) === 'income'
-                                            ? s + Number(tx.amount)
-                                            : s - Number(tx.amount), 0)
-                                    ).toLocaleString('vi-VN')} đ
+                            <div className="summary-card card-blue">
+                                <div className="summary-card-icon">
+                                    <span className="material-symbols-outlined">account_balance_wallet</span>
+                                </div>
+                                <div className="summary-card-body">
+                                    <div className="summary-card-label">Số dư</div>
+                                    <div className="summary-card-value">
+                                        {totalBalance < 0 ? '-' : ''}{formattedBalance}
+                                    </div>
                                 </div>
                             </div>
 
@@ -114,21 +130,21 @@ function ReportPage({ onLogout }) {
                         <div className="row g-4 mt-2">
 
                             <div className="col-12">
-                                <div className="report-card">
+                                <div className="report-card report-card--chart">
                                     <h5 className="report-card-title">Tỷ trọng chi tiêu theo danh mục</h5>
                                     <ExpensePieChart data={expenseData} />
                                 </div>
                             </div>
 
                             <div className="col-12 col-xl-6">
-                                <div className="report-card">
+                                <div className="report-card report-card--chart">
                                     <h5 className="report-card-title">Chi tiêu tuyệt đối theo danh mục</h5>
                                     <ExpenseBarChart data={expenseData} />
                                 </div>
                             </div>
 
                             <div className="col-12 col-xl-6">
-                                <div className="report-card">
+                                <div className="report-card report-card--chart">
                                     <h5 className="report-card-title">Xu hướng chi tiêu 6 tháng gần nhất</h5>
                                     <ExpenseLineChart />
                                 </div>
