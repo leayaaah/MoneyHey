@@ -9,6 +9,18 @@
     --surface-bg: #f5f6f8;
     --text-main: #2c2f31;
     --text-variant: #595c5e;
+    --surface-card: #ffffff;
+    --surface-border: rgba(0, 0, 0, 0.08);
+    --surface-muted: #e6e8eb;
+}
+
+:root[data-theme='dark'] {
+    --surface-bg: #0c0f10;
+    --text-main: #f5f6f8;
+    --text-variant: #9b9d9f;
+    --surface-card: #1a1e21;
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --surface-muted: #22272b;
 }
 
 body {
@@ -29,4 +41,31 @@ h1, h2, .font-headline {
 
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+[data-theme='dark'] .dashboard-header,
+[data-theme='dark'] .login-header {
+    background: rgba(12, 15, 16, 0.95);
+    border-bottom-color: var(--surface-border);
+}
+
+[data-theme='dark'] .sidebar {
+    background: var(--surface-card);
+    border-right-color: var(--surface-border);
+}
+
+[data-theme='dark'] .summary-card,
+[data-theme='dark'] .dash-card,
+[data-theme='dark'] .report-card,
+[data-theme='dark'] .filter-bar,
+[data-theme='dark'] .transaction-grid-row,
+[data-theme='dark'] .quick-action-btn,
+[data-theme='dark'] .user-dropdown {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+}
+
+[data-theme='dark'] .settings-select,
+[data-theme='dark'] .settings-reset-btn {
+    border-color: var(--surface-border);
 }
