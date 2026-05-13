@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/common/Header';
 import Sidebar from '../components/common/Sidebar';
-import { fetchTransactions } from '../../application/services/transactionService';
-import { fetchCategories } from '../../application/services/categoryService';
-import { fetchWallets } from '../../application/services/walletService';
+import { fetchTransactions } from '../services/transactionService';
+import { fetchCategories } from '../services/categoryService';
+import { fetchWallets } from '../services/walletService';
+import { filterTransactions } from '../domain/transaction';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import TransactionList from '../components/transaction/TransactionList';
 import AddTransactionModal from '../components/transaction/AddTransactionModal';
 import TransactionFilter from '../components/transaction/TransactionFilter';
-import '../../css/TransactionPage.css';
+import '../css/TransactionPage.css';
 import Pagination from '../components/common/Pagination';
 
 function TransactionPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [activeNav, setActiveNav] = useState('transactions');
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
     const [wallets, setWallets] = useState([]);
@@ -24,25 +24,17 @@ function TransactionPage({ onLogout }) {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 2;
-
-    const loadTransactions = useCallback(async () => {
-        try {
-            const data = await fetchTransactions();
-            setTransactions(data);
-        } catch (error) {
-            console.error('Failed to load transactions:', error);
-        }
-    }, []);
-
     useEffect(() => {
-        setCurrentPage(1);
-    }, [filters]);
-
-
-
-    useEffect(() => {
+        const loadTransactions = async () => {
+            try {
+                const data = await fetchTransactions();
+                setTransactions(data);
+            } catch (error) {
+                console.error('Failed to load transactions:', error);
+            }
+        };
         loadTransactions();
-    }, [loadTransactions]);
+    }, []);
 
     useEffect(() => {
         const loadCategories = async () => {
@@ -68,14 +60,14 @@ function TransactionPage({ onLogout }) {
         loadWallets();
     }, []);
 
-    const filteredTransactions = transactions.filter(tx => {
-        const txDate = new Date(tx.tx_date);
-
-        if (filters.fromDate && txDate < new Date(filters.fromDate)) return false;
-        if (filters.toDate && txDate > new Date(filters.toDate)) return false;
-        if (filters.category !== 'all' && tx.category_id !== Number(filters.category)) return false;
-        return true;
-    });
+    const filteredTransactions = filterTransactions(transactions, filters);
+    const handleFiltersChange = (updater) => {
+        setFilters(prev => {
+            const nextFilters = typeof updater === 'function' ? updater(prev) : updater;
+            setCurrentPage(1);
+            return nextFilters;
+        });
+    };
     
 
     // pageination
@@ -114,14 +106,10 @@ function TransactionPage({ onLogout }) {
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                                 Thêm giao dịch
                         </button>
-                        <AddTransactionModal
-                            wallets={wallets}
-                            categories={categories}
-                            onTransactionsCreated={loadTransactions}
-                        />
+                        <AddTransactionModal wallets={wallets} categories={categories} />
                     </div>
                     <div className="transaction-content">
-                        <TransactionFilter filters={filters} setFilters={setFilters} categories={categories} />
+                        <TransactionFilter filters={filters} setFilters={handleFiltersChange} categories={categories} />
                         {/* List giao dịch */}
                         <TransactionList transactions={currentTransactions} />
                     </div>

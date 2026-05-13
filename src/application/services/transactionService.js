@@ -1,4 +1,4 @@
-import { addTransaction, getTransactions } from "../../infrastructure/repositories/transactionRepository";
+import { addTransaction, addTransactions, getTransactions } from "../../infrastructure/repositories/transactionRepository";
 import { mapTransactionsWithRelations } from "../../domain/transactions/transactionMapper";
 import { validateTransaction } from "../../domain/transactions/transactionRules";
 
@@ -19,6 +19,17 @@ export const createTransaction = async (transaction) => {
         return newTransaction;
     } catch (error) {
         console.error('Error creating transaction:', error);
+        throw error;
+    }
+}
+
+export const createTransactions = async (transactions) => {
+    transactions.forEach(validateTransaction);
+    try {
+        const newTransactions = await addTransactions(transactions);
+        return newTransactions;
+    } catch (error) {
+        console.error('Error creating transactions:', error);
         throw error;
     }
 }
