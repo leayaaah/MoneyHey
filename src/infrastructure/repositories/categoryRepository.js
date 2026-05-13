@@ -9,3 +9,16 @@ export const getCategories = async () => {
     }  
     return data
 }
+
+export const addCategory = async (category) => {
+    const { data, error } = await supabase
+        .from('categories')
+        .insert(category)
+        .select()
+        .single()
+    if (error) {
+        console.error('Error adding category:', error)
+        throw error
+    }
+    return data
+}
