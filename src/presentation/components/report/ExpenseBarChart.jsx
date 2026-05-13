@@ -1,7 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { colors as themeColors } from '../../../theme/theme';
+import { formatCompactVnd } from '../../utils/formatCurrency';
 
-const formatCurrency = (value) => `$${Number(value).toLocaleString('en-US')}`;
+const formatCurrency = (value) => formatCompactVnd(value);
 
 const chartTheme = {
     text: {
