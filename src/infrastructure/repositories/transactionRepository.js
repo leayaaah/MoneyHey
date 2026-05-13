@@ -33,7 +33,7 @@ export const addTransactions = async (transactions) => {
     return data
 }
 
-export const getTransactionWithType = async(type) => {
+export const getTransactionsByType = async(type) => {
     const { data, error } = await supabase
         .from('transactions')
         .select(`*,
