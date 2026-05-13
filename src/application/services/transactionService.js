@@ -1,4 +1,4 @@
-import { addTransaction, getTransactions } from "../../infrastructure/repositories/transactionRepository";
+import { addTransaction, addTransactions, getTransactions, getTransactionsByType } from "../../infrastructure/repositories/transactionRepository";
 import { mapTransactionsWithRelations } from "../../domain/transactions/transactionMapper";
 import { validateTransaction } from "../../domain/transactions/transactionRules";
 
@@ -22,10 +22,22 @@ export const createTransaction = async (transaction) => {
         throw error;
     }
 }
+
+export const createTransactions = async (transactions) => {
+    transactions.forEach(validateTransaction);
+    try {
+        const newTransactions = await addTransactions(transactions);
+        return newTransactions;
+    } catch (error) {
+        console.error('Error creating transactions:', error);
+        throw error;
+    }
+}
+
 export const fetchTransactionsByType = async (type) => {
     try {
-        const transactions = await getTransactions();
-        return mapTransactionsWithRelations(transactions.filter(tx => tx.tx_type === type));
+        const transactions = await getTransactionsByType(type);
+        return mapTransactionsWithRelations(transactions);
     } catch (error) {
         console.error('Error fetching transactions by type:', error);
         throw error;

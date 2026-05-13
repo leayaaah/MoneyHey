@@ -21,7 +21,19 @@ export const addTransaction = async (transaction) => {
     }
     return data
 }
-export const getTransactionWithType = async(type) => {
+
+export const addTransactions = async (transactions) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .insert(transactions)
+    if (error) {
+        console.error('Error adding transactions:', error)
+        throw error
+    }
+    return data
+}
+
+export const getTransactionsByType = async(type) => {
     const { data, error } = await supabase
         .from('transactions')
         .select(`*,
@@ -34,4 +46,3 @@ export const getTransactionWithType = async(type) => {
     }
     return data
 }
-
