@@ -3,6 +3,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Modal } from 'bootstrap';
 import { createTransaction, createTransactions } from '../../../application/services/transactionService';
 import { parseQuickTransactions } from '../../../application/services/transactionIntelligenceService';
+import { createCategory } from '../../../application/services/categoryService';
 import { useAuth } from '../../hooks/useAuth';
 
 const createManualState = (walletId = '') => ({
@@ -21,20 +22,34 @@ const createQuickState = (walletId = '') => ({
     raw_text: ''
 });
 
-const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => {
+const createCategoryState = () => ({
+    open: false,
+    name: '',
+    target: null
+});
+
+const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCategoriesChanged }) => {
     const defaultWalletId = String(wallets[0]?.wallet_id || '');
     const { user } = useAuth();
     const modalRef = useRef(null);
 
     const [activeMode, setActiveMode] = useState('manual');
+    const [categoryOptions, setCategoryOptions] = useState(categories);
     const [formData, setFormData] = useState(createManualState(defaultWalletId));
     const [quickForm, setQuickForm] = useState(createQuickState(defaultWalletId));
     const [previewTransactions, setPreviewTransactions] = useState([]);
     const [parseStatus, setParseStatus] = useState('');
     const [parseError, setParseError] = useState('');
+    const [categoryForm, setCategoryForm] = useState(createCategoryState());
+    const [categoryError, setCategoryError] = useState('');
     const [isSavingManual, setIsSavingManual] = useState(false);
     const [isParsing, setIsParsing] = useState(false);
     const [isSavingQuick, setIsSavingQuick] = useState(false);
+    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+
+    useEffect(() => {
+        setCategoryOptions(categories);
+    }, [categories]);
 
     useEffect(() => {
         setFormData((prev) => (
@@ -55,6 +70,8 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
         setPreviewTransactions([]);
         setParseStatus('');
         setParseError('');
+        setCategoryError('');
+        setCategoryForm(createCategoryState());
         setActiveMode('manual');
     };
 
@@ -85,6 +102,81 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
                 ? { ...transaction, [field]: value }
                 : transaction
         )));
+    };
+
+    const openCategoryCreator = (target) => {
+        setCategoryError('');
+        setCategoryForm({
+            open: true,
+            name: '',
+            target
+        });
+    };
+
+    const closeCategoryCreator = () => {
+        setCategoryError('');
+        setCategoryForm(createCategoryState());
+    };
+
+    const attachCategoryToTarget = (createdCategory, target) => {
+        if (!target) {
+            return;
+        }
+
+        if (target.kind === 'manual') {
+            setFormData((prev) => ({
+                ...prev,
+                category_id: String(createdCategory.category_id)
+            }));
+            return;
+        }
+
+        if (target.kind === 'quick-preview') {
+            setPreviewTransactions((prev) => prev.map((transaction, index) => (
+                index === target.index
+                    ? {
+                        ...transaction,
+                        category_id: String(createdCategory.category_id),
+                        category_name: createdCategory.category_name
+                    }
+                    : transaction
+            )));
+        }
+    };
+
+    const handleCreateCategory = async () => {
+        const categoryName = categoryForm.name.trim();
+
+        if (!categoryName) {
+            setCategoryError('Vui lòng nhập tên category.');
+            return;
+        }
+
+        const duplicatedCategory = categoryOptions.find(
+            (category) => category.category_name.trim().toLowerCase() === categoryName.toLowerCase()
+        );
+
+        if (duplicatedCategory) {
+            attachCategoryToTarget(duplicatedCategory, categoryForm.target);
+            closeCategoryCreator();
+            return;
+        }
+
+        try {
+            setIsCreatingCategory(true);
+            const createdCategory = await createCategory(categoryName);
+            const nextCategories = [...categoryOptions, createdCategory];
+
+            setCategoryOptions(nextCategories);
+            attachCategoryToTarget(createdCategory, categoryForm.target);
+            await onCategoriesChanged?.(nextCategories);
+            closeCategoryCreator();
+        } catch (error) {
+            console.error('Lỗi khi tạo category:', error);
+            setCategoryError('Không thể tạo category mới.');
+        } finally {
+            setIsCreatingCategory(false);
+        }
     };
 
     const handleManualSubmit = async () => {
@@ -120,7 +212,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
         try {
             const result = await parseQuickTransactions({
                 rawText: quickForm.raw_text,
-                categories
+                categories: categoryOptions
             });
 
             const transactions = result.transactions.map((transaction) => ({
@@ -267,13 +359,20 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
                                         onChange={handleManualChange}
                                     >
                                         <option value="">Chọn danh mục</option>
-                                        {categories.map((category) => (
+                                        {categoryOptions.map((category) => (
                                             <option key={category.category_id} value={category.category_id}>
                                                 {category.category_name}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
+                                <button
+                                    type="button"
+                                    className="btn btn-link quick-category-trigger px-0"
+                                    onClick={() => openCategoryCreator({ kind: 'manual' })}
+                                >
+                                    Không có category phù hợp? Tạo mới
+                                </button>
 
                                 <div className="mb-3">
                                     <label className="form-label">Ngày</label>
@@ -413,7 +512,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
                                                             className="form-select"
                                                             value={transaction.category_id}
                                                             onChange={(event) => {
-                                                                const category = categories.find(
+                                                                const category = categoryOptions.find(
                                                                     (item) => String(item.category_id) === event.target.value
                                                                 );
                                                                 handlePreviewChange(index, 'category_id', event.target.value);
@@ -421,12 +520,19 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
                                                             }}
                                                         >
                                                             <option value="">Chọn danh mục</option>
-                                                            {categories.map((category) => (
+                                                            {categoryOptions.map((category) => (
                                                                 <option key={category.category_id} value={category.category_id}>
                                                                     {category.category_name}
                                                                 </option>
                                                             ))}
                                                         </select>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-link quick-category-trigger px-0 mt-1"
+                                                            onClick={() => openCategoryCreator({ kind: 'quick-preview', index })}
+                                                        >
+                                                            Tạo category mới cho dòng này
+                                                        </button>
                                                     </div>
                                                     <div className="col-md-2">
                                                         <label className="form-label small mb-1">Độ tin cậy</label>
@@ -439,8 +545,51 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated }) => 
                                         ))}
                                     </div>
                                 ) : null}
+
                             </div>
                         )}
+
+                        {categoryForm.open ? (
+                            <div className="quick-category-card mt-4">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 className="mb-0">Tạo category mới</h6>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        aria-label="Close"
+                                        onClick={closeCategoryCreator}
+                                    ></button>
+                                </div>
+                                <div className="row g-2 align-items-end">
+                                    <div className="col-sm-8">
+                                        <label className="form-label small mb-1">Tên category</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={categoryForm.name}
+                                            onChange={(event) => setCategoryForm((prev) => ({
+                                                ...prev,
+                                                name: event.target.value
+                                            }))}
+                                            placeholder="Ví dụ: Cafe, Quà tặng, Chăm sóc thú cưng"
+                                        />
+                                    </div>
+                                    <div className="col-sm-4 d-grid">
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={handleCreateCategory}
+                                            disabled={isCreatingCategory}
+                                        >
+                                            {isCreatingCategory ? 'Đang tạo...' : 'Tạo và chọn'}
+                                        </button>
+                                    </div>
+                                </div>
+                                {categoryError ? (
+                                    <div className="alert alert-danger mt-3 mb-0">{categoryError}</div>
+                                ) : null}
+                            </div>
+                        ) : null}
                     </div>
 
                     <div className="modal-footer">

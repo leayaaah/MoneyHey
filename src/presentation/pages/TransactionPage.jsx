@@ -34,6 +34,17 @@ function TransactionPage({ onLogout }) {
         }
     }, []);
 
+    const loadCategories = useCallback(async () => {
+        try {
+            const data = await fetchCategories();
+            setCategories(data);
+            return data;
+        } catch (error) {
+            console.error('Failed to load categories:', error);
+            throw error;
+        }
+    }, []);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [filters]);
@@ -45,16 +56,8 @@ function TransactionPage({ onLogout }) {
     }, [loadTransactions]);
 
     useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const data = await fetchCategories();
-                setCategories(data);
-            } catch (error) {
-                console.error('Failed to load categories:', error);
-            }
-        };
         loadCategories();
-    }, []);
+    }, [loadCategories]);
 
     useEffect(() => {
         const loadWallets = async () => {
@@ -118,6 +121,7 @@ function TransactionPage({ onLogout }) {
                             wallets={wallets}
                             categories={categories}
                             onTransactionsCreated={loadTransactions}
+                            onCategoriesChanged={loadCategories}
                         />
                     </div>
                     <div className="transaction-content">

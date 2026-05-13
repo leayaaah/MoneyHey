@@ -470,3 +470,15 @@
     font-weight: 700;
     color: var(--emerald-primary);
 }
+
+.quick-category-trigger {
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.quick-category-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: #f8faf9;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
