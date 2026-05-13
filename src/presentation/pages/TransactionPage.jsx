@@ -23,7 +23,7 @@ function TransactionPage({ onLogout }) {
         category: 'all'
     });
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+    const itemsPerPage = 5;
 
     const loadTransactions = useCallback(async () => {
         try {
