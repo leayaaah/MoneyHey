@@ -158,6 +158,28 @@
 .card-red    .summary-card-icon { background: rgba(231,76,60,0.1);  color: #e74c3c; }
 .card-amber  .summary-card-icon { background: rgba(243,156,18,0.1); color: #f39c12; }
 
+.summary-card-body {
+    min-width: 0;
+}
+
+.summary-card-label {
+    font-size: 0.75rem;
+    color: var(--text-variant);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.summary-card-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: 'Manrope', sans-serif;
+    white-space: nowrap;
+    margin-bottom: 0.25rem;
+}
+
 /* ─── Quick action buttons ────────────────────────────────── */
 .quick-action-btn {
     width: 100%;
@@ -284,4 +306,92 @@
 
 .report-grid-row:hover {
     background: var(--qa-color);
+}
+
+/* ─── Report charts ────────────────────────────────────────── */
+.report-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    height: 100%;
+}
+
+.report-card--chart {
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.report-card--chart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-color: rgba(0, 105, 72, 0.16);
+}
+
+.report-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 0.75rem;
+}
+
+.chart-wrapper {
+    width: 100%;
+}
+
+.chart-wrapper--compact {
+    height: 220px;
+    width: calc(100% - 32px);
+    margin: 0 auto;
+}
+
+.chart-wrapper--medium {
+    height: 240px;
+}
+
+.chart-wrapper--tall {
+    height: 260px;
+}
+
+.chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px dashed rgba(0,0,0,0.12);
+    color: var(--text-variant);
+    background: var(--surface-bg);
+    font-size: 0.875rem;
+}
+
+.chart-empty--compact {
+    height: 220px;
+}
+
+.chart-empty--medium {
+    height: 240px;
+}
+
+.chart-empty--tall {
+    height: 260px;
+}
+
+@media screen and (max-width: 767px) {
+    .chart-wrapper--compact,
+    .chart-empty--compact {
+        height: 200px;
+        width: 100%;
+    }
+
+    .chart-wrapper--medium,
+    .chart-empty--medium {
+        height: 220px;
+    }
+
+    .chart-wrapper--tall,
+    .chart-empty--tall {
+        height: 240px;
+    }
 }

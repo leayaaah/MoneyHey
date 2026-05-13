@@ -32,3 +32,17 @@ export const addTransactions = async (transactions) => {
     }
     return data
 }
+
+export const getTransactionWithType = async(type) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .select(`*,
+        categories ( category_name ),
+        wallets ( wallet_name )`)
+        .eq('tx_type', type)
+    if (error) {
+        console.error('Error fetching transactions:', error)
+        throw error
+    }
+    return data
+}

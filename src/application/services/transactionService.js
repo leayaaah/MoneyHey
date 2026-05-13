@@ -33,3 +33,13 @@ export const createTransactions = async (transactions) => {
         throw error;
     }
 }
+
+export const fetchTransactionsByType = async (type) => {
+    try {
+        const transactions = await getTransactions();
+        return mapTransactionsWithRelations(transactions.filter(tx => tx.tx_type === type));
+    } catch (error) {
+        console.error('Error fetching transactions by type:', error);
+        throw error;
+    }
+}
