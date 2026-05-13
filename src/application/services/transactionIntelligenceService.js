@@ -1,4 +1,4 @@
-import { parseTransactionsByAi } from '../../infrastructure/repositories/transactionAiRepository';
+import { getTransactionAiConfig, parseTransactionsByAi } from '../../infrastructure/repositories/transactionAiRepository';
 
 const normalizeVietnamese = (value = '') =>
     value
@@ -137,6 +137,8 @@ const normalizeAiTransactions = (transactions = []) =>
     })).filter((transaction) => transaction.note && transaction.amount > 0);
 
 export const parseQuickTransactions = async ({ rawText, categories }) => {
+    const aiConfig = getTransactionAiConfig();
+
     try {
         const response = await parseTransactionsByAi({ rawText, categories });
         const normalized = normalizeAiTransactions(response.transactions);
@@ -144,15 +146,33 @@ export const parseQuickTransactions = async ({ rawText, categories }) => {
         if (normalized.length > 0) {
             return {
                 source: 'ai',
+                provider: aiConfig.provider,
+                providerLabel: aiConfig.providerLabel,
+                model: aiConfig.model,
                 transactions: normalized
             };
         }
     } catch (error) {
         console.warn('AI parse failed, using fallback parser instead.', error);
+        return {
+            source: 'fallback',
+            provider: aiConfig.provider,
+            providerLabel: aiConfig.providerLabel,
+            model: aiConfig.model,
+            reason:
+                aiConfig.endpoint || aiConfig.openAiApiKeyConfigured || aiConfig.geminiApiKeyConfigured
+                    ? error.message
+                    : `${aiConfig.providerLabel} is not configured yet.`,
+            transactions: parseFallbackTransactions({ rawText, categories })
+        };
     }
 
     return {
         source: 'fallback',
+        provider: aiConfig.provider,
+        providerLabel: aiConfig.providerLabel,
+        model: aiConfig.model,
+        reason: `${aiConfig.providerLabel} returned no valid transactions.`,
         transactions: parseFallbackTransactions({ rawText, categories })
     };
 };

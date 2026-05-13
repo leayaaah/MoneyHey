@@ -228,13 +228,13 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
             setPreviewTransactions(transactions);
             setParseStatus(
                 result.source === 'ai'
-                    ? 'Đã phân tích bằng AI. Bạn có thể rà soát nhanh trước khi lưu.'
-                    : 'AI chưa sẵn sàng nên hệ thống đã dùng bộ phân tích dự phòng. Nên kiểm tra lại category trước khi lưu.'
+                    ? `Parsed with ${result.providerLabel || 'AI'} (${result.model}). Please review before saving.`
+                    : `${result.providerLabel || 'AI'} is unavailable, so the system switched to the fallback parser. ${result.reason || ''}`.trim()
             );
         } catch (error) {
-            console.error('Lỗi khi phân tích giao dịch nhanh:', error);
+            console.error('Lá»—i khi phÃ¢n tÃ­ch giao dá»‹ch nhanh:', error);
             setPreviewTransactions([]);
-            setParseError(error.message || 'Không thể phân tích nội dung giao dịch.');
+            setParseError(error.message || 'KhÃ´ng thá»ƒ phÃ¢n tÃ­ch ná»™i dung giao dá»‹ch.');
         } finally {
             setIsParsing(false);
         }
@@ -460,7 +460,9 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                 </div>
 
                                 {parseStatus ? (
-                                    <div className="alert alert-success mt-3 mb-0">{parseStatus}</div>
+                                    <div className={`alert ${parseStatus.includes('chưa dùng được') ? 'alert-warning' : 'alert-success'} mt-3 mb-0`}>
+                                        {parseStatus}
+                                    </div>
                                 ) : null}
 
                                 {parseError ? (
@@ -625,3 +627,6 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 };
 
 export default AddTransactionModal;
+
+
+
