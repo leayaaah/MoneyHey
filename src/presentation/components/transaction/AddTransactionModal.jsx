@@ -108,6 +108,24 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         };
     }, [shouldRestoreAddModal]);
 
+    useEffect(() => {
+        const addModalElement = modalRef.current;
+
+        if (!addModalElement) {
+            return undefined;
+        }
+
+        const handleHidden = () => {
+            cleanupModalArtifacts();
+        };
+
+        addModalElement.addEventListener('hidden.bs.modal', handleHidden);
+
+        return () => {
+            addModalElement.removeEventListener('hidden.bs.modal', handleHidden);
+        };
+    }, []);
+
     const resetAll = () => {
         setFormData(createManualState(defaultWalletId));
         setQuickForm(createQuickState(defaultWalletId));
@@ -125,6 +143,31 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     const hideAddModal = () => {
         Modal.getOrCreateInstance(modalRef.current).hide();
     };
+
+    const closeAddModal = () => new Promise((resolve) => {
+        const addModalElement = modalRef.current;
+
+        if (!addModalElement) {
+            cleanupModalArtifacts();
+            resolve();
+            return;
+        }
+
+        if (!addModalElement.classList.contains('show')) {
+            cleanupModalArtifacts();
+            resolve();
+            return;
+        }
+
+        const handleHidden = () => {
+            addModalElement.removeEventListener('hidden.bs.modal', handleHidden);
+            cleanupModalArtifacts();
+            resolve();
+        };
+
+        addModalElement.addEventListener('hidden.bs.modal', handleHidden);
+        Modal.getOrCreateInstance(addModalElement).hide();
+    });
 
     const showCategoryModal = () => {
         cleanupModalArtifacts();
@@ -298,7 +341,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
             });
             await onTransactionsCreated?.();
             resetAll();
-            hideAddModal();
+            await closeAddModal();
             alert('Giao dịch đã được thêm.');
         } catch (error) {
             console.error('Error creating transaction:', error);
@@ -379,7 +422,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
             })));
             await onTransactionsCreated?.();
             resetAll();
-            hideAddModal();
+            await closeAddModal();
             alert(`Đã thêm ${previewTransactions.length} giao dịch.`);
         } catch (error) {
             console.error('Error saving quick transactions:', error);

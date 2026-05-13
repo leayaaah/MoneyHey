@@ -78,6 +78,11 @@ function TransactionPage({ onLogout }) {
         if (filters.toDate && txDate > new Date(filters.toDate)) return false;
         if (filters.category !== 'all' && tx.category_id !== Number(filters.category)) return false;
         return true;
+    }).sort((left, right) => {
+        const leftTime = new Date(left.tx_date).getTime();
+        const rightTime = new Date(right.tx_date).getTime();
+
+        return rightTime - leftTime;
     });
     
 

@@ -1,5 +1,26 @@
 import React from 'react';
 import '../../../css/TransactionPage.css';
+
+const formatDateDDMMYYYY = (value) => {
+    if (!value) {
+        return '';
+    }
+
+    const [year, month, day] = String(value).split('T')[0].split('-');
+
+    if (year && month && day) {
+        return `${day}/${month}/${year}`;
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString('vi-VN');
+};
+
 const TransactionList = ({ transactions }) => {
     if (!transactions || transactions.length === 0) {
         return <div className="text-muted">Chưa có giao dịch nào</div>;
@@ -24,7 +45,7 @@ const TransactionList = ({ transactions }) => {
                     <div className="font-headline">{tx.note}</div>
 
                     <div className="text-muted">
-                        {new Date(tx.tx_date).toLocaleDateString()}
+                        {formatDateDDMMYYYY(tx.tx_date)}
                     </div>
 
                     <div>
