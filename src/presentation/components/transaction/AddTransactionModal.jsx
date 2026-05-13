@@ -25,8 +25,7 @@ const createQuickState = (walletId = '') => ({
 const createCategoryState = () => ({
     open: false,
     name: '',
-    txType: 'expense',
-    target: null
+    txType: 'expense'
 });
 
 const CATEGORY_TYPE_LABELS = {
@@ -48,6 +47,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     const [parseStatusTone, setParseStatusTone] = useState('success');
     const [parseError, setParseError] = useState('');
     const [categoryForm, setCategoryForm] = useState(createCategoryState());
+    const [categoryTarget, setCategoryTarget] = useState(null);
     const [categoryError, setCategoryError] = useState('');
     const [isSavingManual, setIsSavingManual] = useState(false);
     const [isParsing, setIsParsing] = useState(false);
@@ -80,6 +80,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         setParseError('');
         setCategoryError('');
         setCategoryForm(createCategoryState());
+        setCategoryTarget(null);
         setActiveMode('manual');
     };
 
@@ -149,17 +150,18 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
     const openCategoryCreator = (target) => {
         setCategoryError('');
+        setCategoryTarget(target);
         setCategoryForm({
             open: true,
             name: '',
-            txType: resolveCategoryTxType(target),
-            target
+            txType: resolveCategoryTxType(target)
         });
     };
 
     const closeCategoryCreator = () => {
         setCategoryError('');
         setCategoryForm(createCategoryState());
+        setCategoryTarget(null);
     };
 
     const attachCategoryToTarget = (createdCategory, target) => {
@@ -203,7 +205,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         });
 
         if (duplicatedCategory) {
-            attachCategoryToTarget(duplicatedCategory, categoryForm.target);
+            attachCategoryToTarget(duplicatedCategory, categoryTarget);
             closeCategoryCreator();
             return;
         }
@@ -218,7 +220,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
             const nextCategories = [...categoryOptions, createdCategory];
             setCategoryOptions(nextCategories);
-            attachCategoryToTarget(createdCategory, categoryForm.target);
+            attachCategoryToTarget(createdCategory, categoryTarget);
             await onCategoriesChanged?.();
             closeCategoryCreator();
         } catch (error) {
