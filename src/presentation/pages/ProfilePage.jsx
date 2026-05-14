@@ -113,7 +113,10 @@ const ProfilePage = ({ onLogout }) => {
                             <h1 className="page-title font-headline">Hồ sơ người dùng</h1>
                             <p className="page-subtitle">{formattedDate}</p>
                         </div>
-                        <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                        <button
+                            type="button"
+                            className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm"
+                        >
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
                             Cập nhật hồ sơ
                         </button>
@@ -237,9 +240,9 @@ const ProfilePage = ({ onLogout }) => {
                             )}
                             {!walletLoading && !walletError && wallets.length > 0 && (
                                 <div className="wallet-list">
-                                    {wallets.map((wallet, index) => (
+                                    {wallets.map((wallet) => (
                                         <div
-                                            key={wallet.wallet_id || `${wallet.wallet_name || 'wallet'}-${index}`}
+                                            key={wallet.wallet_id || `${wallet.wallet_name || 'wallet'}-${wallet.balance || 0}`}
                                             className="wallet-item"
                                         >
                                             <div>
