@@ -311,6 +311,20 @@
     background: rgba(0, 105, 72, 0.06);
 }
 
+.profile-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: rgba(0,0,0,0.08);
+    background: var(--surface-bg);
+    color: var(--text-variant);
+}
+
+.profile-shell .btn-primary-emerald:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .wallet-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

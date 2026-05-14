@@ -116,6 +116,8 @@ const ProfilePage = ({ onLogout }) => {
                         <button
                             type="button"
                             className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm"
+                            title="Tính năng sắp ra mắt"
+                            disabled
                         >
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
                             Cập nhật hồ sơ
@@ -210,7 +212,12 @@ const ProfilePage = ({ onLogout }) => {
                                     <h3 className="profile-card-title">Quản lý ví</h3>
                                     <p className="profile-card-subtitle">Theo dõi và quản lý các ví đang sử dụng</p>
                                 </div>
-                                <button className="profile-action-btn" type="button">
+                                <button
+                                    className="profile-action-btn"
+                                    type="button"
+                                    title="Tính năng sắp ra mắt"
+                                    disabled
+                                >
                                     <span className="material-symbols-outlined">add</span>
                                     Thêm ví
                                 </button>
@@ -240,9 +247,9 @@ const ProfilePage = ({ onLogout }) => {
                             )}
                             {!walletLoading && !walletError && wallets.length > 0 && (
                                 <div className="wallet-list">
-                                    {wallets.map((wallet) => (
+                                    {wallets.map((wallet, index) => (
                                         <div
-                                            key={wallet.wallet_id || `${wallet.wallet_name || 'wallet'}-${wallet.balance || 0}`}
+                                            key={wallet.wallet_id ?? index}
                                             className="wallet-item"
                                         >
                                             <div>
