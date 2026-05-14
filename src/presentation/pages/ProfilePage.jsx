@@ -49,12 +49,14 @@ const ProfilePage = ({ onLogout }) => {
     const [settings] = useState(getStoredSettings);
     const { user } = useAuth();
 
-    const formattedDate = new Date().toLocaleDateString('vi-VN', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
+    const formattedDate = useMemo(() => (
+        new Date().toLocaleDateString('vi-VN', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        })
+    ), []);
 
     const initials = user?.name
         ?.split(' ')
@@ -68,6 +70,10 @@ const ProfilePage = ({ onLogout }) => {
     const totalBalance = useMemo(() => (
         wallets.reduce((sum, wallet) => sum + Number(wallet.balance || 0), 0)
     ), [wallets]);
+
+    const getWalletKey = (wallet) => (
+        wallet.wallet_id || `wallet-${wallet.wallet_name || 'unknown'}-${wallet.user_id || 'unknown'}-${wallet.balance || 0}`
+    );
 
     const languageLabel = settings.language === 'en' ? 'English' : 'Tiếng Việt';
     const startOfWeekLabel = settings.startOfWeek === 'sunday' ? 'Chủ nhật' : 'Thứ hai';
@@ -247,9 +253,9 @@ const ProfilePage = ({ onLogout }) => {
                             )}
                             {!walletLoading && !walletError && wallets.length > 0 && (
                                 <div className="wallet-list">
-                                    {wallets.map((wallet, index) => (
+                                    {wallets.map((wallet) => (
                                         <div
-                                            key={wallet.wallet_id ?? index}
+                                            key={getWalletKey(wallet)}
                                             className="wallet-item"
                                         >
                                             <div>
