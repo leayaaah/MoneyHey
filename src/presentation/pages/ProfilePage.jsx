@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
     language: 'vi',
     currency: 'VND',
     startOfWeek: 'monday',
+    notifications: true,
 };
 
 const getStoredSettings = () => {
@@ -152,7 +153,7 @@ const ProfilePage = ({ onLogout }) => {
                                 </div>
                                 <div className="profile-info-item">
                                     <span className="info-label">Ngày tham gia</span>
-                                    <span className="info-value">Hôm nay</span>
+                                    <span className="info-value">Chưa cập nhật</span>
                                 </div>
                             </div>
                         </section>
@@ -193,7 +194,9 @@ const ProfilePage = ({ onLogout }) => {
                                         <div className="detail-title">Ưu tiên thông báo</div>
                                         <div className="detail-subtitle">Nhắc nhở tài chính</div>
                                     </div>
-                                    <span className="detail-value">Đang bật</span>
+                                    <span className="detail-value">
+                                        {settings.notifications ? 'Đang bật' : 'Đang tắt'}
+                                    </span>
                                 </div>
                             </div>
                         </section>
@@ -241,7 +244,9 @@ const ProfilePage = ({ onLogout }) => {
                                         >
                                             <div>
                                                 <div className="wallet-name">{wallet.wallet_name || 'Ví cá nhân'}</div>
-                                                <div className="wallet-meta">Trạng thái: Đang sử dụng</div>
+                                                <div className="wallet-meta">
+                                                    {wallet.wallet_id ? `Mã ví: ${wallet.wallet_id}` : 'Mã ví: --'}
+                                                </div>
                                             </div>
                                             <div className="wallet-balance">
                                                 {formatBalance(wallet.balance, settings.currency)}
