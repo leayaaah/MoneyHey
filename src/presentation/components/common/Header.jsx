@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../../css/Header.css';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header = ({ onToggleSidebar, onLogout }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [notifCount] = useState(3);
+    const navigate = useNavigate();
 
     const { user } = useAuth(); 
     const initials = user?.name
@@ -19,6 +21,11 @@ const Header = ({ onToggleSidebar, onLogout }) => {
         if (!ok) return;
         setShowUserMenu(false);
         onLogout && onLogout();
+    };
+
+    const handleNavigate = (path) => {
+        setShowUserMenu(false);
+        navigate(path);
     };
 
     return (
@@ -56,17 +63,38 @@ const Header = ({ onToggleSidebar, onLogout }) => {
 
                     {showUserMenu && (
                         <div className="user-dropdown shadow">
-                            <div className="px-3 pt-3 pb-2">
-                                <div className="fw-bold small">{user?.name}</div>
-                                <div className="text-muted" style={{ fontSize: '12px' }}>
-                                    {user?.email}
-                                </div>
+                            <div className="user-dropdown-header">
+                                <div className="user-dropdown-name">{user?.name || 'User'}</div>
+                                <div className="user-dropdown-email">{user?.email || 'Chưa cập nhật email'}</div>
                             </div>
 
+                            <div className="user-dropdown-actions">
+                                <button
+                                    type="button"
+                                    className="user-dropdown-btn"
+                                    onClick={() => handleNavigate('/profile')}
+                                >
+                                    <span className="material-symbols-outlined">person</span>
+                                    Hồ sơ của tôi
+                                </button>
+                                <button
+                                    type="button"
+                                    className="user-dropdown-btn"
+                                    onClick={() => handleNavigate('/settings')}
+                                >
+                                    <span className="material-symbols-outlined">settings</span>
+                                    Cài đặt
+                                </button>
+                            </div>
+
+                            <div className="user-dropdown-divider" />
+
                             <button
-                                className="dropdown-item small py-2 text-danger w-100 text-start border-0 bg-transparent"
+                                type="button"
+                                className="user-dropdown-btn danger"
                                 onClick={handleLogout}
                             >
+                                <span className="material-symbols-outlined">logout</span>
                                 Đăng xuất
                             </button>
                         </div>
