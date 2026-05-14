@@ -57,6 +57,8 @@ const ProfilePage = ({ onLogout }) => {
 
     const initials = user?.name
         ?.split(' ')
+        .map(part => part.trim())
+        .filter(Boolean)
         .slice(-2)
         .map(part => part[0])
         .join('')
@@ -232,8 +234,11 @@ const ProfilePage = ({ onLogout }) => {
                             )}
                             {!walletLoading && !walletError && wallets.length > 0 && (
                                 <div className="wallet-list">
-                                    {wallets.map((wallet) => (
-                                        <div key={wallet.wallet_id || wallet.wallet_name} className="wallet-item">
+                                    {wallets.map((wallet, index) => (
+                                        <div
+                                            key={wallet.wallet_id || `${wallet.wallet_name || 'wallet'}-${index}`}
+                                            className="wallet-item"
+                                        >
                                             <div>
                                                 <div className="wallet-name">{wallet.wallet_name || 'Ví cá nhân'}</div>
                                                 <div className="wallet-meta">Trạng thái: Đang sử dụng</div>
