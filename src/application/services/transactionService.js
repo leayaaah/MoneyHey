@@ -2,9 +2,9 @@ import { addTransaction, addTransactions, getTransactions, getTransactionsByType
 import { mapTransactionsWithRelations } from "../../domain/transactions/transactionMapper";
 import { validateTransaction } from "../../domain/transactions/transactionRules";
 
-export const fetchTransactions = async () => {
+export const fetchTransactions = async (options = {}) => {
     try {
-        const transactions = await getTransactions();
+        const transactions = await getTransactions(options);
         return mapTransactionsWithRelations(transactions);
     } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -34,9 +34,9 @@ export const createTransactions = async (transactions) => {
     }
 }
 
-export const fetchTransactionsByType = async (type) => {
+export const fetchTransactionsByType = async (type, userId) => {
     try {
-        const transactions = await getTransactionsByType(type);
+        const transactions = await getTransactionsByType(type, userId);
         return mapTransactionsWithRelations(transactions);
     } catch (error) {
         console.error('Error fetching transactions by type:', error);

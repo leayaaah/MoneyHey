@@ -7,38 +7,158 @@ import RecentTransactions from '../components/dashboard/RecentTransactions';
 import QuickActions from '../components/dashboard/QuickActions';
 import '../../css/Dashboard.css';
 import { getTotalBalance } from '../../application/services/walletService';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchTransactions } from '../../application/services/transactionService';
+import { useAuth } from '../hooks/useAuth';
+import { formatCompactVnd } from '../utils/formatCurrency';
 
-
-const SUMMARY_CARDS = [];
-
+const normalizeType = (type) => (type || '').toString().toLowerCase();
+const getMonthStart = (date) => new Date(date.getFullYear(), date.getMonth(), 1);
+const toNumber = (value) => Number(value || 0);
+const toPercentChange = (current, previous) => {
+    if (previous === 0) {
+        return current === 0 ? 0 : 100;
+    }
+    return Math.round((Math.abs(current - previous) / Math.abs(previous)) * 100);
+};
 
 const DashboardPage = ({ onLogout }) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [activeNav, setActiveNav] = useState('dashboard');
-    const [totalBalance, setTotalBalance] = useState(0);
+    const [summaryCards, setSummaryCards] = useState([]);
+    const [spendingData, setSpendingData] = useState([]);
+    const [recentTransactions, setRecentTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
-    const navigate = useNavigate();
-    const location = useLocation();
-
-
-    console.log("render dashboard");
 
     useEffect(() => {
-        const fetchBalance = async () => {
+        const loadDashboardData = async () => {
+            if (!user?.user_id) {
+                setLoading(false);
+                return;
+            }
+
+            setLoading(true);
             try {
-                const total = await getTotalBalance();
-                setTotalBalance(total);
-                console.log(total);
+                const now = new Date();
+                const currentMonthStart = getMonthStart(now);
+                const previousMonthStart = new Date(currentMonthStart.getFullYear(), currentMonthStart.getMonth() - 1, 1);
+
+                const [total, transactions] = await Promise.all([
+                    getTotalBalance(user.user_id),
+                    fetchTransactions({ userId: user.user_id })
+                ]);
+
+                const txList = Array.isArray(transactions) ? transactions : [];
+
+                const currentMonthTxs = txList.filter(tx => {
+                    const txDate = new Date(tx.tx_date);
+                    return txDate >= currentMonthStart;
+                });
+                const previousMonthTxs = txList.filter(tx => {
+                    const txDate = new Date(tx.tx_date);
+                    return txDate >= previousMonthStart && txDate < currentMonthStart;
+                });
+
+                const calcByType = (list, txType) => list
+                    .filter(tx => normalizeType(tx.tx_type) === txType)
+                    .reduce((sum, tx) => sum + toNumber(tx.amount), 0);
+
+                const currentIncome = calcByType(currentMonthTxs, 'income');
+                const currentExpense = calcByType(currentMonthTxs, 'expense');
+                const previousIncome = calcByType(previousMonthTxs, 'income');
+                const previousExpense = calcByType(previousMonthTxs, 'expense');
+                const currentNet = currentIncome - currentExpense;
+                const previousNet = previousIncome - previousExpense;
+
+                setSummaryCards([
+                    {
+                        id: 'income',
+                        label: 'Thu tháng này',
+                        value: formatCompactVnd(currentIncome, { showSign: true }),
+                        change: `${toPercentChange(currentIncome, previousIncome)}%`,
+                        positive: currentIncome >= previousIncome,
+                        icon: 'trending_up',
+                        color: 'card-emerald',
+                    },
+                    {
+                        id: 'expense',
+                        label: 'Chi tháng này',
+                        value: `-${formatCompactVnd(currentExpense)}`,
+                        change: `${toPercentChange(currentExpense, previousExpense)}%`,
+                        positive: currentExpense <= previousExpense,
+                        icon: 'trending_down',
+                        color: 'card-red',
+                    },
+                    {
+                        id: 'net',
+                        label: 'Dòng tiền ròng',
+                        value: formatCompactVnd(currentNet, { showSign: true }),
+                        change: `${toPercentChange(currentNet, previousNet)}%`,
+                        positive: currentNet >= previousNet,
+                        icon: 'query_stats',
+                        color: 'card-blue',
+                    },
+                    {
+                        id: 'balance',
+                        label: 'Tổng số dư',
+                        value: formatCompactVnd(total),
+                        change: `${currentMonthTxs.length} giao dịch`,
+                        positive: total >= 0,
+                        icon: 'account_balance_wallet',
+                        color: 'card-amber',
+                        changeSuffix: 'trong tháng này',
+                    },
+                ]);
+
+                const categorySpendMap = currentMonthTxs
+                    .filter(tx => normalizeType(tx.tx_type) === 'expense')
+                    .reduce((acc, tx) => {
+                        const key = tx.categoryName || 'Khác';
+                        acc[key] = (acc[key] || 0) + toNumber(tx.amount);
+                        return acc;
+                    }, {});
+
+                const totalExpenseInMonth = Object.values(categorySpendMap)
+                    .reduce((sum, value) => sum + value, 0);
+
+                const chartData = Object.entries(categorySpendMap)
+                    .map(([label, value]) => ({
+                        label,
+                        value,
+                        pct: totalExpenseInMonth > 0 ? Math.round((value / totalExpenseInMonth) * 100) : 0
+                    }))
+                    .sort((a, b) => b.value - a.value);
+
+                setSpendingData(chartData);
+
+                const recent = [...txList]
+                    .sort((left, right) => new Date(right.tx_date) - new Date(left.tx_date))
+                    .slice(0, 7)
+                    .map((tx) => ({
+                        id: tx.trans_id,
+                        name: tx.note || tx.categoryName || 'Giao dịch',
+                        category: tx.categoryName || 'Khác',
+                        date: new Date(tx.tx_date).toLocaleDateString('vi-VN'),
+                        amount: toNumber(tx.amount),
+                        type: normalizeType(tx.tx_type) === 'income' ? 'income' : 'expense',
+                    }));
+
+                setRecentTransactions(recent);
             } catch (err) {
                 console.error("Lỗi mạng lưới:", err);
+                setSummaryCards([]);
+                setSpendingData([]);
+                setRecentTransactions([]);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchBalance();
-    }, []);
+
+        loadDashboardData();
+    }, [user?.user_id]);
     
 
     return (
@@ -63,7 +183,7 @@ const DashboardPage = ({ onLogout }) => {
 
                     {/* Summary cards */}
                     <div className="summary-grid">
-                        {SUMMARY_CARDS.map(card => (
+                        {summaryCards.map(card => (
                             <SummaryCard key={card.id} {...card} />
                         ))}
                     </div>
@@ -74,13 +194,13 @@ const DashboardPage = ({ onLogout }) => {
                             <QuickActions />
                         </div>
                         <div className="col-12 col-xl-8">
-                            <SpendingChart />
+                            <SpendingChart data={spendingData} loading={loading} />
                         </div>
                     </div>
 
                     {/* Recent transactions */}
                     <div className="mt-4">
-                        <RecentTransactions />
+                        <RecentTransactions transactions={recentTransactions} loading={loading} />
                     </div>
                 </main>
             </div>

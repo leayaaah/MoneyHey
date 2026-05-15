@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SummaryCard = ({ label, value, change, positive, icon, color }) => (
+const SummaryCard = ({ label, value, change, positive, icon, color, changeSuffix = 'so với tháng trước' }) => (
     <div className={`summary-card ${color}`}>
         <div className="summary-card-icon">
             <span className="material-symbols-outlined">{icon}</span>
@@ -12,7 +12,7 @@ const SummaryCard = ({ label, value, change, positive, icon, color }) => (
                 <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>
                     {positive ? 'arrow_upward' : 'arrow_downward'}
                 </span>
-                {change} so với tháng trước
+                {change} {changeSuffix}
             </div>
         </div>
     </div>

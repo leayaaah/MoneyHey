@@ -1,10 +1,22 @@
 import { supabase } from '../supabaseClient'
-export const getTransactions = async () => {
-    const { data, error } = await supabase
+
+export const getTransactions = async ({ userId, limit } = {}) => {
+    let query = supabase
         .from('transactions')
         .select(`*,
         categories ( category_name ),
         wallets ( wallet_name )`)
+        .order('tx_date', { ascending: false })
+
+    if (userId) {
+        query = query.eq('user_id', userId)
+    }
+
+    if (limit) {
+        query = query.limit(limit)
+    }
+
+    const { data, error } = await query
     if (error) {
         console.error('Error fetching transactions:', error)
         throw error
@@ -33,13 +45,19 @@ export const addTransactions = async (transactions) => {
     return data
 }
 
-export const getTransactionsByType = async(type) => {
-    const { data, error } = await supabase
+export const getTransactionsByType = async(type, userId) => {
+    let query = supabase
         .from('transactions')
         .select(`*,
         categories ( category_name ),
         wallets ( wallet_name )`)
         .eq('tx_type', type)
+
+    if (userId) {
+        query = query.eq('user_id', userId)
+    }
+
+    const { data, error } = await query
     if (error) {
         console.error('Error fetching transactions:', error)
         throw error

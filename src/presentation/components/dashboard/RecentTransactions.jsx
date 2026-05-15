@@ -1,16 +1,6 @@
 import React from 'react';
 import { formatCompactVnd } from '../../utils/formatCurrency';
 
-const TRANSACTIONS = [
-    { id: 1, name: 'Siêu thị Vinmart',   category: 'Ăn uống',   date: '24/03/2026', amount: 320_000,   type: 'expense' },
-    { id: 2, name: 'Lương tháng 3',       category: 'Thu nhập',  date: '20/03/2026', amount: 15_000_000, type: 'income' },
-    { id: 3, name: 'Điện - EVN',          category: 'Hóa đơn',   date: '18/03/2026', amount: 450_000,   type: 'expense' },
-    { id: 4, name: 'Grab (di chuyển)',    category: 'Di chuyển', date: '17/03/2026', amount: 85_000,    type: 'expense' },
-    { id: 5, name: 'Freelance design',    category: 'Thu nhập',  date: '15/03/2026', amount: 2_000_000, type: 'income' },
-    { id: 6, name: 'Netflix',             category: 'Giải trí',  date: '12/03/2026', amount: 199_000,   type: 'expense' },
-    { id: 7, name: 'Thuê nhà tháng 3',   category: 'Nhà ở',     date: '10/03/2026', amount: 3_500_000, type: 'expense' },
-];
-
 const CATEGORY_ICONS = {
     'Ăn uống':   'restaurant',
     'Thu nhập':  'payments',
@@ -20,7 +10,7 @@ const CATEGORY_ICONS = {
     'Nhà ở':     'home',
 };
 
-const RecentTransactions = () => (
+const RecentTransactions = ({ transactions = [], loading = false }) => (
     <div className="dash-card">
         <div className="dash-card-header">
             <h6 className="dash-card-title">Giao dịch gần đây</h6>
@@ -29,7 +19,11 @@ const RecentTransactions = () => (
             </button>
         </div>
         <div className="mt-3">
-            {TRANSACTIONS.map(tx => (
+            {loading && <div className="text-muted small">Đang tải giao dịch...</div>}
+            {!loading && transactions.length === 0 && (
+                <div className="text-muted small">Chưa có giao dịch nào để hiển thị.</div>
+            )}
+            {!loading && transactions.map(tx => (
                 <div key={tx.id} className="tx-row">
                     <div className="tx-icon">
                         <span className="material-symbols-outlined">
