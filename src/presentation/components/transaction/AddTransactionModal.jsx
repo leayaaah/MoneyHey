@@ -40,13 +40,16 @@ const createQuickState = (walletId = '') => ({
 
 const createCategoryState = () => ({
     name: '',
-    txType: 'expense'
+    txType: ''
 });
 
 const CATEGORY_TYPE_LABELS = {
+    '': 'Khong xac dinh',
     expense: 'Chi tiêu',
     income: 'Thu nhập'
 };
+
+const normalizeCategoryType = (value) => (value === 'expense' || value === 'income' ? value : '');
 
 const cleanupModalArtifacts = () => {
     document.querySelectorAll('.modal-backdrop').forEach((backdrop, index, items) => {
@@ -239,7 +242,7 @@ const AddTransactionModal = ({
         Modal.getOrCreateInstance(categoryModalRef.current).hide();
     };
 
-    const resolveCategoryTxType = (target) => {
+    const resolveTransactionTxType = (target) => {
         if (!target || target.kind === 'manual') {
             return formData.tx_type || 'expense';
         }
@@ -252,7 +255,10 @@ const AddTransactionModal = ({
     };
 
     const getSelectableCategories = (txType) =>
-        categoryOptions.filter((category) => !category.tx_type || category.tx_type === txType);
+        categoryOptions.filter((category) => {
+            const categoryTxType = normalizeCategoryType(category.tx_type);
+            return !categoryTxType || categoryTxType === txType;
+        });
 
     const handleManualChange = (event) => {
         const { name, value } = event.target;
@@ -300,12 +306,12 @@ const AddTransactionModal = ({
 
     const openCategoryCreator = (target) => {
         setCategoryError('');
-        setCategoryTarget(target);
+        setCategoryTarget(target ? { ...target, txType: resolveTransactionTxType(target) } : null);
         setShouldRestoreAddModal(true);
         skipResetOnHideRef.current = true;
         setCategoryForm({
             name: '',
-            txType: resolveCategoryTxType(target)
+            txType: ''
         });
 
         const addModalElement = modalRef.current;
@@ -363,7 +369,9 @@ const AddTransactionModal = ({
 
         const duplicatedCategory = categoryOptions.find((category) => {
             const sameName = category.category_name.trim().toLowerCase() === categoryName.toLowerCase();
-            const compatibleType = !category.tx_type || category.tx_type === categoryForm.txType;
+            const existingCategoryType = normalizeCategoryType(category.tx_type);
+            const nextCategoryType = normalizeCategoryType(categoryForm.txType);
+            const compatibleType = !existingCategoryType || !nextCategoryType || existingCategoryType === nextCategoryType;
             return sameName && compatibleType;
         });
 
@@ -378,7 +386,7 @@ const AddTransactionModal = ({
 
             const createdCategory = await createCategory({
                 categoryName,
-                txType: categoryForm.txType
+                txType: normalizeCategoryType(categoryForm.txType) || null
             });
 
             setCategoryOptions((prev) => [...prev, createdCategory]);
@@ -822,7 +830,7 @@ const AddTransactionModal = ({
                             <div>
                                 <h5 className="modal-title mb-1">Tạo danh mục mới</h5>
                                 <small className="text-muted">
-                                    Áp dụng cho: {CATEGORY_TYPE_LABELS[categoryForm.txType] || 'Chi tiêu'}
+                                    Loại giao dịch hiện tại: {CATEGORY_TYPE_LABELS[categoryTarget?.txType || resolveTransactionTxType(categoryTarget)]}
                                 </small>
                             </div>
                             <button
@@ -859,6 +867,7 @@ const AddTransactionModal = ({
                                         txType: event.target.value
                                     }))}
                                 >
+                                    <option value="">Khong xac dinh</option>
                                     <option value="expense">Chi tiêu</option>
                                     <option value="income">Thu nhập</option>
                                 </select>
