@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { startTransition, useEffect, useState } from 'react';
 import Header from '../components/common/Header';
 import Sidebar from '../components/common/Sidebar';
 import { fetchTransactions } from '../../application/services/transactionService';
@@ -10,10 +10,10 @@ import AddTransactionModal from '../components/transaction/AddTransactionModal';
 import TransactionFilter from '../components/transaction/TransactionFilter';
 import '../../css/TransactionPage.css';
 import Pagination from '../components/common/Pagination';
+import { useAuth } from '../hooks/useAuth';
 
 function TransactionPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [activeNav, setActiveNav] = useState('transactions');
     const [transactions, setTransactions] = useState([]);
     const [categories, setCategories] = useState([]);
     const [wallets, setWallets] = useState([]);
@@ -24,52 +24,133 @@ function TransactionPage({ onLogout }) {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+    const { user } = useAuth();
+    const userId = user?.user_id;
 
-    const loadTransactions = useCallback(async () => {
-        try {
-            const data = await fetchTransactions();
-            setTransactions(data);
-        } catch (error) {
-            console.error('Failed to load transactions:', error);
+    useEffect(() => {
+        let active = true;
+
+        if (!userId) {
+            startTransition(() => {
+                setTransactions([]);
+            });
+            return () => {
+                active = false;
+            };
         }
-    }, []);
 
-    const loadCategories = useCallback(async () => {
-        try {
-            const data = await fetchCategories();
-            setCategories(data);
-            return data;
-        } catch (error) {
-            console.error('Failed to load categories:', error);
-            throw error;
-        }
-    }, []);
+        fetchTransactions(userId)
+            .then((data) => {
+                if (!active) {
+                    return;
+                }
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [filters]);
+                startTransition(() => {
+                    setTransactions(data);
+                });
+            })
+            .catch((error) => {
+                console.error('Failed to load transactions:', error);
+            });
 
-
-
-    useEffect(() => {
-        loadTransactions();
-    }, [loadTransactions]);
-
-    useEffect(() => {
-        loadCategories();
-    }, [loadCategories]);
-
-    useEffect(() => {
-        const loadWallets = async () => {
-            try {
-                const data = await fetchWallets();
-                setWallets(data);
-            } catch (error) {
-                console.error('Failed to load wallets:', error);
-            }
+        return () => {
+            active = false;
         };
-        loadWallets();
+    }, [userId]);
+
+    useEffect(() => {
+        let active = true;
+
+        fetchCategories()
+            .then((data) => {
+                if (!active) {
+                    return;
+                }
+
+                startTransition(() => {
+                    setCategories(data);
+                });
+            })
+            .catch((error) => {
+                console.error('Failed to load categories:', error);
+            });
+
+        return () => {
+            active = false;
+        };
     }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        if (!userId) {
+            startTransition(() => {
+                setWallets([]);
+            });
+            return () => {
+                active = false;
+            };
+        }
+
+        fetchWallets(userId)
+            .then((data) => {
+                if (!active) {
+                    return;
+                }
+
+                startTransition(() => {
+                    setWallets(data);
+                });
+            })
+            .catch((error) => {
+                console.error('Failed to load wallets:', error);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [userId]);
+
+    const loadTransactions = async () => {
+        if (!userId) {
+            setTransactions([]);
+            return;
+        }
+
+        const data = await fetchTransactions(userId);
+        startTransition(() => {
+            setTransactions(data);
+        });
+    };
+
+    const loadCategories = async () => {
+        const data = await fetchCategories();
+        startTransition(() => {
+            setCategories(data);
+        });
+        return data;
+    };
+
+    const loadWallets = async () => {
+        if (!userId) {
+            setWallets([]);
+            return;
+        }
+
+        const data = await fetchWallets(userId);
+        startTransition(() => {
+            setWallets(data);
+        });
+    };
+
+    const handleFilterChange = (nextFilters) => {
+        setCurrentPage(1);
+        setFilters((prev) => (
+            typeof nextFilters === 'function'
+                ? nextFilters(prev)
+                : nextFilters
+        ));
+    };
 
     const filteredTransactions = transactions.filter(tx => {
         const txDate = new Date(tx.tx_date);
@@ -126,12 +207,14 @@ function TransactionPage({ onLogout }) {
                         <AddTransactionModal
                             wallets={wallets}
                             categories={categories}
-                            onTransactionsCreated={loadTransactions}
+                            onTransactionsCreated={async () => {
+                                await Promise.all([loadTransactions(), loadWallets()]);
+                            }}
                             onCategoriesChanged={loadCategories}
                         />
                     </div>
                     <div className="transaction-content">
-                        <TransactionFilter filters={filters} setFilters={setFilters} categories={categories} />
+                        <TransactionFilter filters={filters} setFilters={handleFilterChange} categories={categories} />
                         {/* List giao dịch */}
                         <TransactionList transactions={currentTransactions} />
                     </div>

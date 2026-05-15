@@ -22,6 +22,7 @@ export const addTransaction = async (transaction) => {
     const { data, error } = await supabase
         .from('transactions')
         .insert(transaction)
+        .select()
     if (error) {
         console.error('Error adding transaction:', error)
         throw error
@@ -33,6 +34,7 @@ export const addTransactions = async (transactions) => {
     const { data, error } = await supabase
         .from('transactions')
         .insert(transactions)
+        .select()
     if (error) {
         console.error('Error adding transactions:', error)
         throw error
@@ -53,3 +55,35 @@ export const getTransactionsByType = async(type) => {
     }
     return data
 }
+
+export const deleteTransactionsByIds = async (transactionIds) => {
+    const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .in('trans_id', transactionIds);
+
+    if (error) {
+        console.error('Error deleting transactions:', error);
+        throw error;
+    }
+};
+
+export const countTransactionsByWalletId = async (walletId, userId) => {
+    let query = supabase
+        .from('transactions')
+        .select('trans_id', { count: 'exact', head: true })
+        .eq('wallet_id', walletId);
+
+    if (userId) {
+        query = query.eq('user_id', userId);
+    }
+
+    const { count, error } = await query;
+
+    if (error) {
+        console.error('Error counting wallet transactions:', error);
+        throw error;
+    }
+
+    return count || 0;
+};

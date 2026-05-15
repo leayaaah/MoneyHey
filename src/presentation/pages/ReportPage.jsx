@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { startTransition, useState, useEffect } from 'react';
 import Header from '../components/common/Header';
 import Sidebar from '../components/common/Sidebar';
 import { fetchTransactions } from '../../application/services/transactionService';
@@ -8,24 +8,45 @@ import ExpensePieChart from '../components/report/ExpensePieChart';
 import ExpenseBarChart from '../components/report/ExpenseBarChart';
 import ExpenseLineChart from '../components/report/ExpenseLineChart';
 import { formatCompactVnd } from '../utils/formatCurrency';
+import { useAuth } from '../hooks/useAuth';
 
 const normalizeType = (type) => (type || '').toString().toLowerCase();
 
 function ReportPage({ onLogout }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [transactions, setTransactions] = useState([]);
+    const { user } = useAuth();
 
     useEffect(() => {
-        const loadTransactions = async () => {
-            try {
-                const data = await fetchTransactions();
-                setTransactions(data);
-            } catch (error) {
+        let active = true;
+
+        if (!user?.user_id) {
+            startTransition(() => {
+                setTransactions([]);
+            });
+            return () => {
+                active = false;
+            };
+        }
+
+        fetchTransactions(user.user_id)
+            .then((data) => {
+                if (!active) {
+                    return;
+                }
+
+                startTransition(() => {
+                    setTransactions(data);
+                });
+            })
+            .catch((error) => {
                 console.error('Failed to load transactions:', error);
-            }
+            });
+
+        return () => {
+            active = false;
         };
-        loadTransactions();
-    }, []);
+    }, [user?.user_id]);
 
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
