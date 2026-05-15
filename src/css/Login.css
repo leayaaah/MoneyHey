@@ -8,11 +8,11 @@
 }
 
 .login-card .form-label {
-    color: var(--text-variant) !important;
+    color: var(--text-variant);
 }
 
 .login-card .form-check-label {
-    color: var(--text-variant) !important;
+    color: var(--text-variant);
 }
 
 .login-card .display-6 {
