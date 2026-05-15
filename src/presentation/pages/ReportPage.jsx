@@ -19,7 +19,7 @@ const getCategorySummary = (transactions, type) => {
     transactions
         .filter((transaction) => normalizeType(transaction.tx_type) === type)
         .forEach((transaction) => {
-            const key = transaction.categoryName || 'Khac';
+            const key = transaction.categoryName || 'Khác';
 
             if (!map[key]) {
                 map[key] = 0;
@@ -112,7 +112,7 @@ function ReportPage({ onLogout }) {
                     <div className="report-content">
                         <div className="page-title-row">
                             <div>
-                                <h1 className="page-title font-headline">Bao cao</h1>
+                                <h1 className="page-title font-headline">Báo cáo</h1>
                                 <p className="page-subtitle">{formattedDate}</p>
                             </div>
                         </div>
@@ -123,7 +123,7 @@ function ReportPage({ onLogout }) {
                                     <span className="material-symbols-outlined">trending_up</span>
                                 </div>
                                 <div className="summary-card-body">
-                                    <div className="summary-card-label">Tong thu</div>
+                                    <div className="summary-card-label">Tổng thu</div>
                                     <div className="summary-card-value text-success">+{formattedIncome}</div>
                                 </div>
                             </div>
@@ -133,7 +133,7 @@ function ReportPage({ onLogout }) {
                                     <span className="material-symbols-outlined">trending_down</span>
                                 </div>
                                 <div className="summary-card-body">
-                                    <div className="summary-card-label">Tong chi</div>
+                                    <div className="summary-card-label">Tổng chi</div>
                                     <div className="summary-card-value text-danger">-{formattedExpense}</div>
                                 </div>
                             </div>
@@ -143,12 +143,12 @@ function ReportPage({ onLogout }) {
                                     <span className="material-symbols-outlined">account_balance_wallet</span>
                                 </div>
                                 <div className="summary-card-body">
-                                    <div className="summary-card-label">So du vi</div>
+                                    <div className="summary-card-label">Số dư ví</div>
                                     <div className="summary-card-value">
                                         {walletBalance < 0 ? '-' : ''}
                                         {formattedWalletBalance}
                                     </div>
-                                    <div className="summary-card-label">Dong tien rong: {formattedNetCashFlow}</div>
+                                    <div className="summary-card-label">Dòng tiền ròng: {formattedNetCashFlow}</div>
                                 </div>
                             </div>
                         </div>
@@ -156,21 +156,21 @@ function ReportPage({ onLogout }) {
                         <div className="row g-4 mt-2">
                             <div className="col-12">
                                 <div className="report-card report-card--chart">
-                                    <h5 className="report-card-title">Ty trong chi tieu theo danh muc</h5>
+                                    <h5 className="report-card-title">Tỷ trọng chi tiêu theo danh mục</h5>
                                     <ExpensePieChart data={expenseData} />
                                 </div>
                             </div>
 
                             <div className="col-12 col-xl-6">
                                 <div className="report-card report-card--chart">
-                                    <h5 className="report-card-title">Chi tieu tuyet doi theo danh muc</h5>
+                                    <h5 className="report-card-title">Chi tiêu tuyệt đối theo danh mục</h5>
                                     <ExpenseBarChart data={expenseData} />
                                 </div>
                             </div>
 
                             <div className="col-12 col-xl-6">
                                 <div className="report-card report-card--chart">
-                                    <h5 className="report-card-title">Xu huong chi tieu 6 thang gan nhat</h5>
+                                    <h5 className="report-card-title">Xu hướng chi tiêu 6 tháng gần nhất</h5>
                                     <ExpenseLineChart />
                                 </div>
                             </div>
