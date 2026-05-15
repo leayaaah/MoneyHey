@@ -175,7 +175,7 @@ function TransactionPage({ onLogout }) {
     };
 
     const handleDeleteTransaction = async (transaction) => {
-        const shouldDelete = window.confirm(`Xoa giao dich "${transaction.note}"?`);
+        const shouldDelete = window.confirm(`Xóa giao dịch "${transaction.note}"?`);
 
         if (!shouldDelete) {
             return;
@@ -185,10 +185,10 @@ function TransactionPage({ onLogout }) {
             setDeletingId(transaction.trans_id);
             await removeTransaction(transaction.trans_id);
             await Promise.all([loadTransactions(), loadWallets()]);
-            alert('Da xoa giao dich.');
+            alert('Đã xóa giao dịch.');
         } catch (error) {
             console.error('Failed to delete transaction:', error);
-            alert(error?.message || 'Khong the xoa giao dich.');
+            alert(error?.message || 'Không thể xóa giao dịch.');
         } finally {
             setDeletingId(null);
         }
@@ -267,7 +267,7 @@ function TransactionPage({ onLogout }) {
                 <main className={`transaction-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
                     <div className="page-title-row">
                         <div className="transaction-nav">
-                            <h1 className="page-title font-headline">Quan ly giao dich</h1>
+                            <h1 className="page-title font-headline">Quản lý giao dịch</h1>
                             <p className="page-subtitle">{formattedDate}</p>
                         </div>
                         <button
@@ -278,7 +278,7 @@ function TransactionPage({ onLogout }) {
                             data-bs-focus="false"
                         >
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
-                            Them giao dich
+                            Thêm giao dịch
                         </button>
                         <AddTransactionModal
                             wallets={wallets}

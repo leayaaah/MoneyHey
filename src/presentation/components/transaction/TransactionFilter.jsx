@@ -23,7 +23,7 @@ const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
     return (
         <div className="filter-bar">
             <div className="filter-group">
-                <label>Tu ngay</label>
+                <label>Từ ngày</label>
                 <input
                     type="date"
                     name="fromDate"
@@ -33,7 +33,7 @@ const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
             </div>
 
             <div className="filter-group">
-                <label>Den ngay</label>
+                <label>Đến ngày</label>
                 <input
                     type="date"
                     name="toDate"
@@ -43,26 +43,26 @@ const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
             </div>
 
             <div className="filter-group">
-                <label>Loai giao dich</label>
+                <label>Loại giao dịch</label>
                 <select
                     name="txType"
                     value={filters.txType}
                     onChange={handleChange}
                 >
-                    <option value="all">Tat ca</option>
-                    <option value="expense">Chi tieu</option>
-                    <option value="income">Thu nhap</option>
+                    <option value="all">Tất cả</option>
+                    <option value="expense">Chi tiêu</option>
+                    <option value="income">Thu nhập</option>
                 </select>
             </div>
 
             <div className="filter-group">
-                <label>Danh muc</label>
+                <label>Danh mục</label>
                 <select
                     name="category"
                     value={filters.category}
                     onChange={handleChange}
                 >
-                    <option value="all">Tat ca</option>
+                    <option value="all">Tất cả</option>
                     {categories.map((category) => (
                         <option key={category.category_id} value={category.category_id}>
                             {category.category_name}
@@ -72,13 +72,13 @@ const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
             </div>
 
             <div className="filter-group">
-                <label>Vi</label>
+                <label>Ví</label>
                 <select
                     name="wallet"
                     value={filters.wallet}
                     onChange={handleChange}
                 >
-                    <option value="all">Tat ca</option>
+                    <option value="all">Tất cả</option>
                     {wallets.map((wallet) => (
                         <option key={wallet.wallet_id} value={wallet.wallet_id}>
                             {wallet.wallet_name}
@@ -88,13 +88,13 @@ const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
             </div>
 
             <div className="filter-group">
-                <label>Tim kiem</label>
+                <label>Tìm kiếm</label>
                 <input
                     type="text"
                     name="keyword"
                     value={filters.keyword}
                     onChange={handleChange}
-                    placeholder="Ghi chu..."
+                    placeholder="Ghi chú..."
                 />
             </div>
 

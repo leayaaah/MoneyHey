@@ -24,17 +24,17 @@ const formatDateDDMMYYYY = (value) => {
 
 const TransactionList = ({ transactions, onEdit, onDelete, deletingId }) => {
     if (!transactions || transactions.length === 0) {
-        return <div className="text-muted">Chua co giao dich nao</div>;
+        return <div className="text-muted">Chưa có giao dịch nào</div>;
     }
 
     return (
         <div className="transaction-grid">
             <div className="transaction-grid-header">
-                <div>Ghi chu</div>
-                <div>Ngay</div>
-                <div>Danh muc</div>
-                <div>Vi</div>
-                <div>So tien</div>
+                <div>Ghi chú</div>
+                <div>Ngày</div>
+                <div>Danh mục</div>
+                <div>Ví</div>
+                <div>Số tiền</div>
                 <div>#</div>
             </div>
 
@@ -72,7 +72,7 @@ const TransactionList = ({ transactions, onEdit, onDelete, deletingId }) => {
                                 type="button"
                                 onClick={() => onEdit?.(tx)}
                             >
-                                Sua
+                                Sửa
                             </button>
                             <button
                                 className="btn btn-outline-danger btn-sm ms-2"
@@ -80,7 +80,7 @@ const TransactionList = ({ transactions, onEdit, onDelete, deletingId }) => {
                                 onClick={() => onDelete?.(tx)}
                                 disabled={deletingId === tx.trans_id}
                             >
-                                {deletingId === tx.trans_id ? 'Dang xoa...' : 'Xoa'}
+                                {deletingId === tx.trans_id ? 'Đang xóa...' : 'Xóa'}
                             </button>
                         </div>
                     </div>
