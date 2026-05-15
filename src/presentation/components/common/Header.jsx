@@ -5,7 +5,6 @@ import { useAuth } from '../../hooks/useAuth';
 
 const Header = ({ onToggleSidebar, onLogout }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
-    const [notifCount] = useState(3);
     const navigate = useNavigate();
 
     const { user } = useAuth(); 
@@ -76,6 +75,14 @@ const Header = ({ onToggleSidebar, onLogout }) => {
                                 >
                                     <span className="material-symbols-outlined">person</span>
                                     Hồ sơ của tôi
+                                </button>
+                                <button
+                                    type="button"
+                                    className="user-dropdown-btn"
+                                    onClick={() => handleNavigate('/transactions')}
+                                >
+                                    <span className="material-symbols-outlined">receipt_long</span>
+                                    Giao dịch của tôi
                                 </button>
                                 <button
                                     type="button"

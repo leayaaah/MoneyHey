@@ -151,8 +151,8 @@ const ProfilePage = ({ onLogout }) => {
 
                             <div className="profile-info-grid">
                                 <div className="profile-info-item">
-                                    <span className="info-label">Mã người dùng</span>
-                                    <span className="info-value">{user?.user_id || '---'}</span>
+                                    <span className="info-label">Tên hiển thị</span>
+                                    <span className="info-value">{user?.name || 'Người dùng'}</span>
                                 </div>
                                 <div className="profile-info-item">
                                     <span className="info-label">Số điện thoại</span>
@@ -261,7 +261,7 @@ const ProfilePage = ({ onLogout }) => {
                                             <div>
                                                 <div className="wallet-name">{wallet.wallet_name || 'Ví cá nhân'}</div>
                                                 <div className="wallet-meta">
-                                                    {wallet.wallet_id ? `Mã ví: ${wallet.wallet_id}` : 'Mã ví: --'}
+                                                    Ví cá nhân
                                                 </div>
                                             </div>
                                             <div className="wallet-balance">
