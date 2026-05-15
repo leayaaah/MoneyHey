@@ -32,15 +32,15 @@ const getStoredSettings = () => {
     try {
         return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
     } catch (error) {
-        console.warn('Khong the doc cai dat da luu:', error);
+        console.warn('Không thể đọc cài đặt đã lưu:', error);
         return DEFAULT_SETTINGS;
     }
 };
 
 const CURRENCY_LABELS = {
-    VND: 'd',
+    VND: 'đ',
     USD: '$',
-    EUR: 'EUR',
+    EUR: '€',
 };
 
 const formatBalance = (value, currency) => {
@@ -91,8 +91,8 @@ const ProfilePage = ({ onLogout }) => {
         wallets.reduce((sum, wallet) => sum + Number(wallet.balance || 0), 0)
     ), [wallets]);
 
-    const languageLabel = settings.language === 'en' ? 'English' : 'Tieng Viet';
-    const startOfWeekLabel = settings.startOfWeek === 'sunday' ? 'Chu nhat' : 'Thu hai';
+    const languageLabel = settings.language === 'en' ? 'English' : 'Tiếng Việt';
+    const startOfWeekLabel = settings.startOfWeek === 'sunday' ? 'Chủ nhật' : 'Thứ hai';
 
     const resetWalletForm = () => {
         setWalletForm(createWalletFormState());
@@ -130,14 +130,14 @@ const ProfilePage = ({ onLogout }) => {
                 });
             })
             .catch((error) => {
-                console.error('Khong the tai danh sach vi:', error);
+                console.error('Không thể tải danh sách ví:', error);
 
                 if (!active) {
                     return;
                 }
 
                 startTransition(() => {
-                    setWalletError('Khong the tai danh sach vi luc nay.');
+                    setWalletError('Không thể tải danh sách ví lúc này.');
                     setWallets([]);
                     setWalletLoading(false);
                 });
@@ -169,9 +169,9 @@ const ProfilePage = ({ onLogout }) => {
                 setWalletLoading(false);
             });
         } catch (error) {
-            console.error('Khong the tai danh sach vi:', error);
+            console.error('Không thể tải danh sách ví:', error);
             startTransition(() => {
-                setWalletError('Khong the tai danh sach vi luc nay.');
+                setWalletError('Không thể tải danh sách ví lúc này.');
                 setWallets([]);
                 setWalletLoading(false);
             });
@@ -209,7 +209,7 @@ const ProfilePage = ({ onLogout }) => {
         event.preventDefault();
 
         if (!userId) {
-            setWalletError('Phien dang nhap khong hop le.');
+            setWalletError('Phiên đăng nhập không hợp lệ.');
             return;
         }
 
@@ -220,20 +220,20 @@ const ProfilePage = ({ onLogout }) => {
 
             if (editingWalletId) {
                 await updateWallet(editingWalletId, walletForm);
-                setWalletActionMessage('Da cap nhat vi thanh cong.');
+                setWalletActionMessage('Đã cập nhật ví thành công.');
             } else {
                 await createWallet({
                     ...walletForm,
                     user_id: userId,
                 });
-                setWalletActionMessage('Da tao vi moi.');
+                setWalletActionMessage('Đã tạo ví mới.');
             }
 
             await loadWallets();
             resetWalletForm();
         } catch (error) {
-            console.error('Khong the luu vi:', error);
-            setWalletError(error?.message || 'Khong the luu thay doi cho vi.');
+            console.error('Không thể lưu ví:', error);
+            setWalletError(error?.message || 'Không thể lưu thay đổi cho ví.');
         } finally {
             setIsSavingWallet(false);
         }
@@ -241,11 +241,11 @@ const ProfilePage = ({ onLogout }) => {
 
     const handleDeleteWallet = async (wallet) => {
         if (!userId) {
-            setWalletError('Phien dang nhap khong hop le.');
+            setWalletError('Phiên đăng nhập không hợp lệ.');
             return;
         }
 
-        if (!window.confirm(`Xoa vi "${wallet.wallet_name}"? Thao tac nay khong the hoan tac.`)) {
+        if (!window.confirm(`Xóa ví "${wallet.wallet_name}"? Thao tác này không thể hoàn tác.`)) {
             return;
         }
 
@@ -260,10 +260,10 @@ const ProfilePage = ({ onLogout }) => {
                 resetWalletForm();
             }
 
-            setWalletActionMessage('Da xoa vi thanh cong.');
+            setWalletActionMessage('Đã xóa ví thành công.');
         } catch (error) {
-            console.error('Khong the xoa vi:', error);
-            setWalletError(error?.message || 'Khong the xoa vi nay.');
+            console.error('Không thể xóa ví:', error);
+            setWalletError(error?.message || 'Không thể xóa ví này.');
         } finally {
             setDeletingWalletId(null);
         }
@@ -279,17 +279,17 @@ const ProfilePage = ({ onLogout }) => {
                 <main className={`profile-main ${sidebarOpen ? 'sidebar-expanded' : 'sidebar-collapsed'}`}>
                     <div className="page-title-row">
                         <div>
-                            <h1 className="page-title font-headline">Ho so nguoi dung</h1>
+                            <h1 className="page-title font-headline">Hồ sơ người dùng</h1>
                             <p className="page-subtitle">{formattedDate}</p>
                         </div>
                         <button
                             type="button"
                             className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm"
-                            title="Tinh nang sap ra mat"
+                            title="Tính năng sắp ra mắt"
                             disabled
                         >
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
-                            Cap nhat ho so
+                            Cập nhật hồ sơ
                         </button>
                     </div>
 
@@ -302,31 +302,31 @@ const ProfilePage = ({ onLogout }) => {
                                         : <span>{initials}</span>}
                                 </div>
                                 <div className="profile-hero-info">
-                                    <h2 className="profile-name">{user?.name || 'Nguoi dung'}</h2>
-                                    <p className="profile-email">{user?.email || 'Chua cap nhat email'}</p>
+                                    <h2 className="profile-name">{user?.name || 'Người dùng'}</h2>
+                                    <p className="profile-email">{user?.email || 'Chưa cập nhật email'}</p>
                                     <div className="profile-tags">
-                                        <span className="profile-tag">Tai khoan ca nhan</span>
-                                        <span className="profile-tag success">Dang hoat dong</span>
+                                        <span className="profile-tag">Tài khoản cá nhân</span>
+                                        <span className="profile-tag success">Đang hoạt động</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="profile-info-grid">
                                 <div className="profile-info-item">
-                                    <span className="info-label">Ten hien thi</span>
-                                    <span className="info-value">{user?.name || 'Nguoi dung'}</span>
+                                    <span className="info-label">Tên hiển thị</span>
+                                    <span className="info-value">{user?.name || 'Người dùng'}</span>
                                 </div>
                                 <div className="profile-info-item">
-                                    <span className="info-label">So dien thoai</span>
-                                    <span className="info-value">Chua cap nhat</span>
+                                    <span className="info-label">Số điện thoại</span>
+                                    <span className="info-value">Chưa cập nhật</span>
                                 </div>
                                 <div className="profile-info-item">
-                                    <span className="info-label">Dia chi</span>
-                                    <span className="info-value">Chua cap nhat</span>
+                                    <span className="info-label">Địa chỉ</span>
+                                    <span className="info-value">Chưa cập nhật</span>
                                 </div>
                                 <div className="profile-info-item">
-                                    <span className="info-label">Ngay tham gia</span>
-                                    <span className="info-value">Chua cap nhat</span>
+                                    <span className="info-label">Ngày tham gia</span>
+                                    <span className="info-value">Chưa cập nhật</span>
                                 </div>
                             </div>
                         </section>
@@ -334,8 +334,8 @@ const ProfilePage = ({ onLogout }) => {
                         <section className="profile-card">
                             <div className="profile-card-header">
                                 <div>
-                                    <h3 className="profile-card-title">Thong tin co ban</h3>
-                                    <p className="profile-card-subtitle">Thiet lap mac dinh va tuy chon thuong dung</p>
+                                    <h3 className="profile-card-title">Thông tin cơ bản</h3>
+                                    <p className="profile-card-subtitle">Thiết lập mặc định và tùy chọn thường dùng</p>
                                 </div>
                                 <span className="profile-chip">{languageLabel}</span>
                             </div>
@@ -343,32 +343,32 @@ const ProfilePage = ({ onLogout }) => {
                             <div className="profile-detail-list">
                                 <div className="profile-detail-row">
                                     <div>
-                                        <div className="detail-title">Ngon ngu</div>
-                                        <div className="detail-subtitle">Hien thi giao dien</div>
+                                        <div className="detail-title">Ngôn ngữ</div>
+                                        <div className="detail-subtitle">Hiển thị giao diện</div>
                                     </div>
                                     <span className="detail-value">{languageLabel}</span>
                                 </div>
                                 <div className="profile-detail-row">
                                     <div>
-                                        <div className="detail-title">Tien te</div>
-                                        <div className="detail-subtitle">Don vi hien thi</div>
+                                        <div className="detail-title">Tiền tệ</div>
+                                        <div className="detail-subtitle">Đơn vị hiển thị</div>
                                     </div>
                                     <span className="detail-value">{settings.currency}</span>
                                 </div>
                                 <div className="profile-detail-row">
                                     <div>
-                                        <div className="detail-title">Bat dau tuan</div>
-                                        <div className="detail-subtitle">Lich bao cao</div>
+                                        <div className="detail-title">Bắt đầu tuần</div>
+                                        <div className="detail-subtitle">Lịch báo cáo</div>
                                     </div>
                                     <span className="detail-value">{startOfWeekLabel}</span>
                                 </div>
                                 <div className="profile-detail-row">
                                     <div>
-                                        <div className="detail-title">Uu tien thong bao</div>
-                                        <div className="detail-subtitle">Nhac nho tai chinh</div>
+                                        <div className="detail-title">Ưu tiên thông báo</div>
+                                        <div className="detail-subtitle">Nhắc nhở tài chính</div>
                                     </div>
                                     <span className="detail-value">
-                                        {settings.notifications ? 'Dang bat' : 'Dang tat'}
+                                        {settings.notifications ? 'Đang bật' : 'Đang tắt'}
                                     </span>
                                 </div>
                             </div>
@@ -377,8 +377,8 @@ const ProfilePage = ({ onLogout }) => {
                         <section className="profile-card wallet-card">
                             <div className="profile-card-header">
                                 <div>
-                                    <h3 className="profile-card-title">Quan ly vi</h3>
-                                    <p className="profile-card-subtitle">Tao vi moi, chinh so du hien tai va don vi khong con dung</p>
+                                    <h3 className="profile-card-title">Quản lý ví</h3>
+                                    <p className="profile-card-subtitle">Tạo ví mới, chỉnh số dư hiện tại và dọn ví không còn dùng</p>
                                 </div>
                                 <button
                                     className="profile-action-btn"
@@ -386,17 +386,17 @@ const ProfilePage = ({ onLogout }) => {
                                     onClick={handleCreateWallet}
                                 >
                                     <span className="material-symbols-outlined">add</span>
-                                    Them vi
+                                    Thêm ví
                                 </button>
                             </div>
 
                             <div className="wallet-summary">
                                 <div className="wallet-summary-item">
-                                    <div className="wallet-summary-label">So luong vi</div>
+                                    <div className="wallet-summary-label">Số lượng ví</div>
                                     <div className="wallet-summary-value">{wallets.length}</div>
                                 </div>
                                 <div className="wallet-summary-item">
-                                    <div className="wallet-summary-label">Tong so du</div>
+                                    <div className="wallet-summary-label">Tổng số dư</div>
                                     <div className="wallet-summary-value">
                                         {formatBalance(totalBalance, settings.currency)}
                                     </div>
@@ -407,18 +407,18 @@ const ProfilePage = ({ onLogout }) => {
                                 <form className="wallet-form" onSubmit={handleWalletSubmit}>
                                     <div className="wallet-form-grid">
                                         <div>
-                                            <label className="form-label">Ten vi</label>
+                                            <label className="form-label">Tên ví</label>
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 name="wallet_name"
                                                 value={walletForm.wallet_name}
                                                 onChange={handleWalletFormChange}
-                                                placeholder="Vi tien mat, MB Bank, MoMo..."
+                                                placeholder="Ví tiền mặt, MB Bank, MoMo..."
                                             />
                                         </div>
                                         <div>
-                                            <label className="form-label">So du hien tai</label>
+                                            <label className="form-label">Số dư hiện tại</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -436,7 +436,7 @@ const ProfilePage = ({ onLogout }) => {
                                             onClick={resetWalletForm}
                                             disabled={isSavingWallet}
                                         >
-                                            Huy
+                                            Hủy
                                         </button>
                                         <button
                                             type="submit"
@@ -444,10 +444,10 @@ const ProfilePage = ({ onLogout }) => {
                                             disabled={isSavingWallet}
                                         >
                                             {isSavingWallet
-                                                ? 'Dang luu...'
+                                                ? 'Đang lưu...'
                                                 : editingWalletId
-                                                    ? 'Cap nhat vi'
-                                                    : 'Tao vi'}
+                                                    ? 'Cập nhật ví'
+                                                    : 'Tạo ví'}
                                         </button>
                                     </div>
                                 </form>
@@ -458,13 +458,13 @@ const ProfilePage = ({ onLogout }) => {
                             ) : null}
 
                             {walletLoading ? (
-                                <div className="profile-empty">Dang tai danh sach vi...</div>
+                                <div className="profile-empty">Đang tải danh sách ví...</div>
                             ) : null}
                             {!walletLoading && walletError ? (
                                 <div className="profile-empty error">{walletError}</div>
                             ) : null}
                             {!walletLoading && !walletError && wallets.length === 0 ? (
-                                <div className="profile-empty">Chua co vi nao. Hay tao vi de bat dau quan ly.</div>
+                                <div className="profile-empty">Chưa có ví nào. Hãy tạo ví để bắt đầu quản lý.</div>
                             ) : null}
                             {!walletLoading && !walletError && wallets.length > 0 ? (
                                 <div className="wallet-list">
@@ -474,9 +474,9 @@ const ProfilePage = ({ onLogout }) => {
                                             className="wallet-item"
                                         >
                                             <div className="wallet-item-main">
-                                                <div className="wallet-name">{wallet.wallet_name || 'Vi ca nhan'}</div>
+                                                <div className="wallet-name">{wallet.wallet_name || 'Ví cá nhân'}</div>
                                                 <div className="wallet-meta">
-                                                    Cap nhat so du thu cong de phan anh so tien dang co thuc te
+                                                    Cập nhật số dư thủ công để phản ánh số tiền đang có thực tế
                                                 </div>
                                             </div>
                                             <div className="wallet-item-actions">
@@ -489,7 +489,7 @@ const ProfilePage = ({ onLogout }) => {
                                                         className="btn btn-outline-primary btn-sm"
                                                         onClick={() => handleEditWallet(wallet)}
                                                     >
-                                                        Sua
+                                                        Sửa
                                                     </button>
                                                     <button
                                                         type="button"
@@ -497,7 +497,7 @@ const ProfilePage = ({ onLogout }) => {
                                                         onClick={() => handleDeleteWallet(wallet)}
                                                         disabled={deletingWalletId === wallet.wallet_id}
                                                     >
-                                                        {deletingWalletId === wallet.wallet_id ? 'Dang xoa...' : 'Xoa'}
+                                                        {deletingWalletId === wallet.wallet_id ? 'Đang xóa...' : 'Xóa'}
                                                     </button>
                                                 </div>
                                             </div>
