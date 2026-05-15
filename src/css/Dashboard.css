@@ -16,8 +16,8 @@
 .sidebar {
     width: 0;
     overflow: hidden;
-    background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.07);
+    background: var(--surface-card);
+    border-right: 1px solid var(--surface-border);
     transition: width 0.25s ease;
     flex-shrink: 0;
     display: flex;
@@ -134,7 +134,7 @@
 
 
 .summary-card {
-    background: white;
+    background: var(--surface-card);
     width: 25%;
     border-radius: 1rem;
     padding: 1.25rem;
@@ -142,13 +142,13 @@
     
     align-items: flex-start;
     gap: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-card);
     transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .summary-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .summary-card-icon {
@@ -212,10 +212,10 @@
 
 /* ─── Generic dash card ───────────────────────────────────── */
 .dash-card {
-    background: white;
+    background: var(--surface-card);
     border-radius: 1rem;
     padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-card);
 }
 
 .dash-card-header {
@@ -307,9 +307,9 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    border: 1.5px solid rgba(0,0,0,0.08);
+    border: 1.5px solid var(--surface-border);
     border-radius: 0.75rem;
-    background: white;
+    background: var(--surface-card);
     color: var(--text-main);
     font-size: 0.8125rem;
     font-weight: 600;
@@ -326,7 +326,7 @@
 
 .quick-action-btn:hover {
     border-color: var(--qa-color, var(--emerald-primary));
-    background: color-mix(in srgb, var(--qa-color, var(--emerald-primary)) 5%, white);
+    background: color-mix(in srgb, var(--qa-color, var(--emerald-primary)) 5%, var(--surface-card));
     transform: translateY(-1px);
 }
 

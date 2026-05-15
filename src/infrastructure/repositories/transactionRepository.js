@@ -28,3 +28,28 @@ export const addTransaction = async (transaction) => {
     }
     return data
 }
+
+export const addTransactions = async (transactions) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .insert(transactions)
+    if (error) {
+        console.error('Error adding transactions:', error)
+        throw error
+    }
+    return data
+}
+
+export const getTransactionsByType = async(type) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .select(`*,
+        categories ( category_name ),
+        wallets ( wallet_name )`)
+        .eq('tx_type', type)
+    if (error) {
+        console.error('Error fetching transactions:', error)
+        throw error
+    }
+    return data
+}

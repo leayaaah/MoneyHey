@@ -1,7 +1,6 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/common/Header';
 import Sidebar from '../components/common/Sidebar';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchTransactions } from '../../application/services/transactionService';
 import { fetchCategories } from '../../application/services/categoryService';
 import { fetchWallets } from '../../application/services/walletService';
@@ -24,7 +23,28 @@ function TransactionPage({ onLogout }) {
         category: 'all'
     });
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+    const itemsPerPage = 5;
+
+    const loadTransactions = useCallback(async () => {
+        try {
+            const data = await fetchTransactions();
+            setTransactions(data);
+        } catch (error) {
+            console.error('Failed to load transactions:', error);
+        }
+    }, []);
+
+    const loadCategories = useCallback(async () => {
+        try {
+            const data = await fetchCategories();
+            setCategories(data);
+            return data;
+        } catch (error) {
+            console.error('Failed to load categories:', error);
+            throw error;
+        }
+    }, []);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [filters]);
@@ -32,28 +52,12 @@ function TransactionPage({ onLogout }) {
 
 
     useEffect(() => {
-        const loadTransactions = async () => {
-            try {
-                const data = await fetchTransactions();
-                setTransactions(data);
-            } catch (error) {
-                console.error('Failed to load transactions:', error);
-            }
-        };
         loadTransactions();
-    }, []);
+    }, [loadTransactions]);
 
     useEffect(() => {
-        const loadCategories = async () => {
-            try {
-                const data = await fetchCategories();
-                setCategories(data);
-            } catch (error) {
-                console.error('Failed to load categories:', error);
-            }
-        };
         loadCategories();
-    }, []);
+    }, [loadCategories]);
 
     useEffect(() => {
         const loadWallets = async () => {
@@ -73,8 +77,12 @@ function TransactionPage({ onLogout }) {
         if (filters.fromDate && txDate < new Date(filters.fromDate)) return false;
         if (filters.toDate && txDate > new Date(filters.toDate)) return false;
         if (filters.category !== 'all' && tx.category_id !== Number(filters.category)) return false;
-        console.log(tx);
         return true;
+    }).sort((left, right) => {
+        const leftTime = new Date(left.tx_date).getTime();
+        const rightTime = new Date(right.tx_date).getTime();
+
+        return rightTime - leftTime;
     });
     
 
@@ -90,7 +98,6 @@ function TransactionPage({ onLogout }) {
     const formattedDate = new Date().toLocaleDateString('vi-VN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
-    const location = useLocation();
 
 
     return (
@@ -111,11 +118,17 @@ function TransactionPage({ onLogout }) {
                         <button className="btn-primary-emerald px-4 py-2 d-flex align-items-center gap-2 shadow-sm"
                             type="button"
                             data-bs-toggle="modal" 
-                            data-bs-target="#addModal">
+                            data-bs-target="#addModal"
+                            data-bs-focus="false">
                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                                 Thêm giao dịch
                         </button>
-                        <AddTransactionModal wallets={wallets} categories={categories} />
+                        <AddTransactionModal
+                            wallets={wallets}
+                            categories={categories}
+                            onTransactionsCreated={loadTransactions}
+                            onCategoriesChanged={loadCategories}
+                        />
                     </div>
                     <div className="transaction-content">
                         <TransactionFilter filters={filters} setFilters={setFilters} categories={categories} />

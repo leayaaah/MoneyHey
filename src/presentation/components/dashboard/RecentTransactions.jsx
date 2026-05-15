@@ -44,7 +44,9 @@ const RecentTransactions = ({ transactions = [] }) => {
                                 {tx.categoryName} · {new Date(tx.tx_date).toLocaleDateString('vi-VN')}
                             </div>
                         </div>
-                        <div className={`tx-amount ${tx.tx_type}`}>{formatCurrency(tx.amount, tx.tx_type)}</div>
+                        <div className={`tx-amount ${tx.tx_type}`}>
+                            {formatCurrency(tx.amount, tx.tx_type)}
+                        </div>
                     </div>
                 ))}
             </div>

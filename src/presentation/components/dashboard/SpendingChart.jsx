@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatCompactVnd } from '../../utils/formatCurrency';
 
 const SpendingChart = ({ items = [] }) => (
     <div className="dash-card h-100">
@@ -15,9 +16,7 @@ const SpendingChart = ({ items = [] }) => (
                 <div key={bar.label}>
                     <div className="d-flex justify-content-between mb-1 small">
                         <span className="text-muted">{bar.label}</span>
-                        <span className="fw-semibold">
-                            {Number(bar.amount || 0).toLocaleString('vi-VN')} đ
-                        </span>
+                        <span className="fw-semibold">{formatCompactVnd(bar.amount)}</span>
                     </div>
                     <div className="progress" style={{ height: '8px', borderRadius: '99px', background: 'var(--surface-bg)' }}>
                         <div

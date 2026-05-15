@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const navigate = useNavigate();
     return (
-        <div className="min-vh-100 d-flex flex-column">
+        <div className="min-vh-100 d-flex bg-dark text-white flex-column ">
             <LoginHeader />
             
             <main className="flex-grow-1 d-flex align-items-center justify-content-center p-3 pt-5 mt-4">
@@ -16,9 +16,9 @@ const LoginPage = () => {
                     <div className="row justify-content-center">
                         <div className="col-12 col-xl-10">
 
-                            <div className="login-card bg-white d-flex flex-column flex-md-row">
+                            <div className="login-card auth-surface d-flex flex-column flex-md-row">
 
-                                <div className="col-md-6 d-flex align-items-center bg-white">
+                                <div className="col-md-6 d-flex align-items-center auth-surface">
                                     <LoginForm />
                                 </div>
 
