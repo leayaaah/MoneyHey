@@ -71,8 +71,8 @@ const ProfilePage = ({ onLogout }) => {
         wallets.reduce((sum, wallet) => sum + Number(wallet.balance || 0), 0)
     ), [wallets]);
 
-    const getWalletKey = (wallet) => (
-        wallet.wallet_id || `wallet-${wallet.wallet_name || 'unknown'}-${wallet.user_id || 'unknown'}-${wallet.balance || 0}`
+    const getWalletKey = (wallet, index) => (
+        wallet.wallet_id || `wallet-${wallet.wallet_name || 'unknown'}-${index}`
     );
 
     const languageLabel = settings.language === 'en' ? 'English' : 'Tiếng Việt';
@@ -253,9 +253,9 @@ const ProfilePage = ({ onLogout }) => {
                             )}
                             {!walletLoading && !walletError && wallets.length > 0 && (
                                 <div className="wallet-list">
-                                    {wallets.map((wallet) => (
+                                    {wallets.map((wallet, index) => (
                                         <div
-                                            key={getWalletKey(wallet)}
+                                            key={getWalletKey(wallet, index)}
                                             className="wallet-item"
                                         >
                                             <div>
