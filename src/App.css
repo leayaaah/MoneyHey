@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap'); */
 
 :root {
+    color-scheme: light;
     --emerald-primary: #006948;
     --emerald-dim: #005b3f;
     --emerald-light: #8cfeca;
@@ -19,6 +20,7 @@
 }
 
 :root[data-theme='dark'] {
+    color-scheme: dark;
     --surface-bg: #0c0f10;
     --text-main: #f5f6f8;
     --text-variant: #9b9d9f;
@@ -147,6 +149,15 @@ h1, h2, .font-headline {
 
 [data-theme='dark'] .form-control::placeholder {
     color: var(--text-variant);
+}
+
+[data-theme='dark'] .form-select option,
+[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
+    color: var(--text-main);
+}
+
+[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(1);
 }
 
 [data-theme='dark'] .btn-close {

@@ -85,6 +85,7 @@
     overflow-y: auto;
     transition: margin-left 0.25s ease;
     min-width: 0;
+    color: var(--text-main);
 }
 
 /* ─── Page title ──────────────────────────────────────────── */
@@ -338,12 +339,19 @@
     gap: 4px;
 }
 
+.filter-group label {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
 .filter-group input,
 .filter-group select {
     padding: 6px 10px;
     border-radius: 8px;
     border: 1px solid var(--surface-border);
     font-size: 13px;
+    background: var(--surface-card);
+    color: var(--text-main);
 }
 
 .btn-reset {
@@ -354,6 +362,7 @@
     background: var(--surface-muted);
     cursor: pointer;
     font-weight: 600;
+    color: var(--text-main);
 }
 
 .btn-reset:hover {
@@ -364,6 +373,7 @@
     border-radius: 8px;
     border: none;
     background: var(--surface-muted);
+    color: var(--text-main);
 }
 .transaction-content .filter-bar{
     display: flex;
@@ -398,6 +408,7 @@
     align-items: center;
     padding: 12px;
     background: var(--surface-card);
+    color: var(--text-main);
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     transition: 0.2s;
@@ -405,7 +416,7 @@
 
 
 .transaction-grid-row:hover {
-    background: var(--qa-color);
+    background: color-mix(in srgb, var(--emerald-primary) 8%, var(--surface-card));
 }
 
 .quick-add-tabs {
@@ -481,4 +492,18 @@
     border-radius: 14px;
     background: var(--surface-bg);
     border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] .transaction-grid-row .badge {
+    color: var(--text-main);
+}
+
+[data-theme='dark'] .transaction-grid-row .btn-outline-primary,
+[data-theme='dark'] .transaction-grid-row .btn-outline-danger {
+    background: transparent;
+}
+
+[data-theme='dark'] .transaction-grid-row .btn-outline-primary:hover,
+[data-theme='dark'] .transaction-grid-row .btn-outline-danger:hover {
+    color: #fff;
 }
