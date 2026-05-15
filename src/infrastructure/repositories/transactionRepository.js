@@ -56,6 +56,37 @@ export const getTransactionsByType = async(type) => {
     return data
 }
 
+export const getTransactionById = async (transactionId) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('trans_id', transactionId)
+        .single()
+
+    if (error) {
+        console.error('Error fetching transaction:', error)
+        throw error
+    }
+
+    return data
+}
+
+export const updateTransactionById = async (transactionId, transaction) => {
+    const { data, error } = await supabase
+        .from('transactions')
+        .update(transaction)
+        .eq('trans_id', transactionId)
+        .select()
+        .single()
+
+    if (error) {
+        console.error('Error updating transaction:', error)
+        throw error
+    }
+
+    return data
+}
+
 export const deleteTransactionsByIds = async (transactionIds) => {
     const { error } = await supabase
         .from('transactions')
@@ -64,6 +95,18 @@ export const deleteTransactionsByIds = async (transactionIds) => {
 
     if (error) {
         console.error('Error deleting transactions:', error);
+        throw error;
+    }
+};
+
+export const deleteTransactionById = async (transactionId) => {
+    const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('trans_id', transactionId);
+
+    if (error) {
+        console.error('Error deleting transaction:', error);
         throw error;
     }
 };

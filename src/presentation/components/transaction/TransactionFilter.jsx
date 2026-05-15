@@ -1,26 +1,29 @@
 import React from 'react';
 import '/src/css/TransactionPage.css';
-const TransactionFilter = ({ filters, setFilters, categories }) => {
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFilters(prev => ({ ...prev, [name]: value }));
-        console.log(name,value);
-        
+const defaultFilters = {
+    fromDate: '',
+    toDate: '',
+    category: 'all',
+    wallet: 'all',
+    txType: 'all',
+    keyword: ''
+};
+
+const TransactionFilter = ({ filters, setFilters, categories, wallets }) => {
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleReset = () => {
-        setFilters({
-            fromDate: '',
-            toDate: '',
-            category: 'all'
-        });
+        setFilters(defaultFilters);
     };
 
     return (
         <div className="filter-bar">
             <div className="filter-group">
-                <label>Từ ngày</label>
+                <label>Tu ngay</label>
                 <input
                     type="date"
                     name="fromDate"
@@ -30,7 +33,7 @@ const TransactionFilter = ({ filters, setFilters, categories }) => {
             </div>
 
             <div className="filter-group">
-                <label>Đến ngày</label>
+                <label>Den ngay</label>
                 <input
                     type="date"
                     name="toDate"
@@ -40,22 +43,62 @@ const TransactionFilter = ({ filters, setFilters, categories }) => {
             </div>
 
             <div className="filter-group">
-                <label>Danh mục</label>
+                <label>Loai giao dich</label>
+                <select
+                    name="txType"
+                    value={filters.txType}
+                    onChange={handleChange}
+                >
+                    <option value="all">Tat ca</option>
+                    <option value="expense">Chi tieu</option>
+                    <option value="income">Thu nhap</option>
+                </select>
+            </div>
+
+            <div className="filter-group">
+                <label>Danh muc</label>
                 <select
                     name="category"
                     value={filters.category}
                     onChange={handleChange}
                 >
-                    <option value="all">Tất cả</option>
-                    {categories.map(c => (
-                        <option key={c.category_id} value={c.category_id}>
-                            {c.category_name}
+                    <option value="all">Tat ca</option>
+                    {categories.map((category) => (
+                        <option key={category.category_id} value={category.category_id}>
+                            {category.category_name}
                         </option>
                     ))}
                 </select>
             </div>
 
-            <button className="btn-reset" onClick={handleReset}>
+            <div className="filter-group">
+                <label>Vi</label>
+                <select
+                    name="wallet"
+                    value={filters.wallet}
+                    onChange={handleChange}
+                >
+                    <option value="all">Tat ca</option>
+                    {wallets.map((wallet) => (
+                        <option key={wallet.wallet_id} value={wallet.wallet_id}>
+                            {wallet.wallet_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="filter-group">
+                <label>Tim kiem</label>
+                <input
+                    type="text"
+                    name="keyword"
+                    value={filters.keyword}
+                    onChange={handleChange}
+                    placeholder="Ghi chu..."
+                />
+            </div>
+
+            <button className="btn-reset" type="button" onClick={handleReset}>
                 Reset
             </button>
         </div>

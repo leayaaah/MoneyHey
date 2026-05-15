@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Modal } from 'bootstrap';
-import { createTransaction, createTransactions } from '../../../application/services/transactionService';
+import {
+    createTransaction,
+    createTransactions,
+    updateTransaction
+} from '../../../application/services/transactionService';
 import { parseQuickTransactions } from '../../../application/services/transactionIntelligenceService';
 import { createCategory } from '../../../application/services/categoryService';
 import { useAuth } from '../../hooks/useAuth';
+
+const getToday = () => new Date().toISOString().slice(0, 10);
 
 const createManualState = (walletId = '') => ({
     user_id: '',
@@ -12,13 +18,23 @@ const createManualState = (walletId = '') => ({
     category_id: '',
     amount: '',
     note: '',
-    tx_date: new Date().toISOString().slice(0, 10),
+    tx_date: getToday(),
     tx_type: 'expense'
+});
+
+const createManualStateFromTransaction = (transaction, walletId = '') => ({
+    user_id: transaction?.user_id || '',
+    wallet_id: String(transaction?.wallet_id || walletId),
+    category_id: String(transaction?.category_id || ''),
+    amount: String(transaction?.amount ?? ''),
+    note: transaction?.note || '',
+    tx_date: String(transaction?.tx_date || getToday()).split('T')[0],
+    tx_type: transaction?.tx_type || 'expense'
 });
 
 const createQuickState = (walletId = '') => ({
     wallet_id: walletId,
-    tx_date: new Date().toISOString().slice(0, 10),
+    tx_date: getToday(),
     raw_text: ''
 });
 
@@ -46,15 +62,31 @@ const cleanupModalArtifacts = () => {
     }
 };
 
-const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCategoriesChanged }) => {
+const AddTransactionModal = ({
+    wallets,
+    categories,
+    onTransactionsCreated,
+    onCategoriesChanged,
+    modalId = 'addModal',
+    mode = 'create',
+    transaction = null,
+    onModalClosed
+}) => {
+    const isEditMode = mode === 'edit';
     const defaultWalletId = String(wallets[0]?.wallet_id || '');
     const { user } = useAuth();
     const modalRef = useRef(null);
     const categoryModalRef = useRef(null);
+    const skipResetOnHideRef = useRef(false);
+    const categoryModalId = `${modalId}-createCategory`;
 
     const [activeMode, setActiveMode] = useState('manual');
     const [categoryOptions, setCategoryOptions] = useState(categories);
-    const [formData, setFormData] = useState(createManualState(defaultWalletId));
+    const [formData, setFormData] = useState(() => (
+        isEditMode
+            ? createManualStateFromTransaction(transaction, defaultWalletId)
+            : createManualState(defaultWalletId)
+    ));
     const [quickForm, setQuickForm] = useState(createQuickState(defaultWalletId));
     const [previewTransactions, setPreviewTransactions] = useState([]);
     const [parseStatus, setParseStatus] = useState('');
@@ -74,17 +106,28 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     }, [categories]);
 
     useEffect(() => {
-        setFormData((prev) => (
-            prev.wallet_id
-                ? prev
-                : { ...prev, wallet_id: defaultWalletId }
-        ));
+        setFormData(
+            isEditMode
+                ? createManualStateFromTransaction(transaction, defaultWalletId)
+                : createManualState(defaultWalletId)
+        );
+    }, [defaultWalletId, isEditMode, transaction]);
+
+    useEffect(() => {
         setQuickForm((prev) => (
             prev.wallet_id
                 ? prev
                 : { ...prev, wallet_id: defaultWalletId }
         ));
     }, [defaultWalletId]);
+
+    useEffect(() => {
+        if (!isEditMode) {
+            return;
+        }
+
+        setActiveMode('manual');
+    }, [isEditMode, transaction]);
 
     useEffect(() => {
         const categoryModalElement = categoryModalRef.current;
@@ -117,6 +160,26 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
         const handleHidden = () => {
             cleanupModalArtifacts();
+            if (skipResetOnHideRef.current) {
+                skipResetOnHideRef.current = false;
+                return;
+            }
+            setFormData(
+                isEditMode
+                    ? createManualStateFromTransaction(transaction, defaultWalletId)
+                    : createManualState(defaultWalletId)
+            );
+            setQuickForm(createQuickState(defaultWalletId));
+            setPreviewTransactions([]);
+            setParseStatus('');
+            setParseStatusTone('success');
+            setParseError('');
+            setCategoryError('');
+            setCategoryForm(createCategoryState());
+            setCategoryTarget(null);
+            setShouldRestoreAddModal(false);
+            setActiveMode('manual');
+            onModalClosed?.();
         };
 
         addModalElement.addEventListener('hidden.bs.modal', handleHidden);
@@ -124,10 +187,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         return () => {
             addModalElement.removeEventListener('hidden.bs.modal', handleHidden);
         };
-    }, []);
+    }, [defaultWalletId, isEditMode, onModalClosed, transaction]);
 
     const resetAll = () => {
-        setFormData(createManualState(defaultWalletId));
+        setFormData(
+            isEditMode
+                ? createManualStateFromTransaction(transaction, defaultWalletId)
+                : createManualState(defaultWalletId)
+        );
         setQuickForm(createQuickState(defaultWalletId));
         setPreviewTransactions([]);
         setParseStatus('');
@@ -147,13 +214,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     const closeAddModal = () => new Promise((resolve) => {
         const addModalElement = modalRef.current;
 
-        if (!addModalElement) {
-            cleanupModalArtifacts();
-            resolve();
-            return;
-        }
-
-        if (!addModalElement.classList.contains('show')) {
+        if (!addModalElement || !addModalElement.classList.contains('show')) {
             cleanupModalArtifacts();
             resolve();
             return;
@@ -218,13 +279,13 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     };
 
     const handlePreviewChange = (index, field, value) => {
-        setPreviewTransactions((prev) => prev.map((transaction, transactionIndex) => {
-            if (transactionIndex !== index) {
-                return transaction;
+        setPreviewTransactions((prev) => prev.map((item, itemIndex) => {
+            if (itemIndex !== index) {
+                return item;
             }
 
             const next = {
-                ...transaction,
+                ...item,
                 [field]: value
             };
 
@@ -241,6 +302,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         setCategoryError('');
         setCategoryTarget(target);
         setShouldRestoreAddModal(true);
+        skipResetOnHideRef.current = true;
         setCategoryForm({
             name: '',
             txType: resolveCategoryTxType(target)
@@ -279,14 +341,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         }
 
         if (target.kind === 'quick-preview') {
-            setPreviewTransactions((prev) => prev.map((transaction, index) => (
+            setPreviewTransactions((prev) => prev.map((item, index) => (
                 index === target.index
                     ? {
-                        ...transaction,
+                        ...item,
                         category_id: String(createdCategory.category_id),
                         category_name: createdCategory.category_name
                     }
-                    : transaction
+                    : item
             )));
         }
     };
@@ -295,7 +357,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         const categoryName = categoryForm.name.trim();
 
         if (!categoryName) {
-            setCategoryError('Vui lòng nhập tên danh mục.');
+            setCategoryError('Vui long nhap ten danh muc.');
             return;
         }
 
@@ -319,14 +381,13 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                 txType: categoryForm.txType
             });
 
-            const nextCategories = [...categoryOptions, createdCategory];
-            setCategoryOptions(nextCategories);
+            setCategoryOptions((prev) => [...prev, createdCategory]);
             attachCategoryToTarget(createdCategory, categoryTarget);
             await onCategoriesChanged?.();
             closeCategoryCreator();
         } catch (error) {
             console.error('Error creating category:', error);
-            setCategoryError(error?.message || 'Không thể tạo danh mục mới.');
+            setCategoryError(error?.message || 'Khong the tao danh muc moi.');
         } finally {
             setIsCreatingCategory(false);
         }
@@ -335,17 +396,28 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
     const handleManualSubmit = async () => {
         try {
             setIsSavingManual(true);
+
+            if (isEditMode) {
+                await updateTransaction(transaction.trans_id, {
+                    ...formData,
+                    user_id: user?.user_id || transaction?.user_id || ''
+                });
+                await onTransactionsCreated?.();
+                await closeAddModal();
+                alert('Giao dich da duoc cap nhat.');
+                return;
+            }
+
             await createTransaction({
                 ...formData,
                 user_id: user.user_id
             });
             await onTransactionsCreated?.();
-            resetAll();
             await closeAddModal();
-            alert('Giao dịch đã được thêm.');
+            alert('Giao dich da duoc them.');
         } catch (error) {
-            console.error('Error creating transaction:', error);
-            alert('Vui lòng nhập đầy đủ và đúng thông tin giao dịch.');
+            console.error('Error saving transaction:', error);
+            alert(error?.message || 'Vui long nhap day du va dung thong tin giao dich.');
         } finally {
             setIsSavingManual(false);
         }
@@ -353,7 +425,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
     const handleQuickParse = async () => {
         if (!quickForm.raw_text.trim()) {
-            setParseError('Vui lòng dán nội dung giao dịch cần phân tích.');
+            setParseError('Vui long dan noi dung giao dich can phan tich.');
             setPreviewTransactions([]);
             return;
         }
@@ -369,14 +441,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                 categories: categoryOptions
             });
 
-            const transactions = result.transactions.map((transaction) => ({
-                ...transaction,
+            const transactions = result.transactions.map((item) => ({
+                ...item,
                 wallet_id: quickForm.wallet_id,
                 tx_date: quickForm.tx_date
             }));
 
             if (!transactions.length) {
-                throw new Error('Không tách được giao dịch hợp lệ nào từ văn bản đã dán.');
+                throw new Error('Khong tach duoc giao dich hop le nao tu van ban da dan.');
             }
 
             setPreviewTransactions(transactions);
@@ -389,97 +461,103 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
         } catch (error) {
             console.error('Error parsing quick transactions:', error);
             setPreviewTransactions([]);
-            setParseError(error.message || 'Không thể phân tích nội dung giao dịch.');
+            setParseError(error.message || 'Khong the phan tich noi dung giao dich.');
         } finally {
             setIsParsing(false);
         }
     };
 
     const handleQuickSubmit = async () => {
-        const invalidTransaction = previewTransactions.find((transaction) =>
-            !transaction.note ||
-            !transaction.wallet_id ||
-            !transaction.category_id ||
-            !transaction.tx_date ||
-            Number(transaction.amount) <= 0
+        const invalidTransaction = previewTransactions.find((item) =>
+            !item.note ||
+            !item.wallet_id ||
+            !item.category_id ||
+            !item.tx_date ||
+            Number(item.amount) <= 0
         );
 
         if (invalidTransaction) {
-            setParseError('Bản xem trước còn dòng thiếu danh mục, ví, ngày hoặc số tiền không hợp lệ.');
+            setParseError('Ban xem truoc con dong thieu danh muc, vi, ngay hoac so tien khong hop le.');
             return;
         }
 
         try {
             setIsSavingQuick(true);
-            await createTransactions(previewTransactions.map((transaction) => ({
+            await createTransactions(previewTransactions.map((item) => ({
                 user_id: user.user_id,
-                wallet_id: transaction.wallet_id,
-                category_id: transaction.category_id,
-                amount: Number(transaction.amount),
-                note: transaction.note,
-                tx_date: transaction.tx_date,
-                tx_type: transaction.tx_type
+                wallet_id: item.wallet_id,
+                category_id: item.category_id,
+                amount: Number(item.amount),
+                note: item.note,
+                tx_date: item.tx_date,
+                tx_type: item.tx_type
             })));
             await onTransactionsCreated?.();
-            resetAll();
             await closeAddModal();
-            alert(`Đã thêm ${previewTransactions.length} giao dịch.`);
+            alert(`Da them ${previewTransactions.length} giao dich.`);
         } catch (error) {
             console.error('Error saving quick transactions:', error);
-            setParseError('Không thể lưu danh sách giao dịch nhanh.');
+            setParseError('Khong the luu danh sach giao dich nhanh.');
         } finally {
             setIsSavingQuick(false);
         }
     };
 
+    const modalTitle = isEditMode ? 'Sua giao dich' : 'Them giao dich';
+    const modalDescription = isEditMode
+        ? 'Cap nhat thong tin giao dich hien co.'
+        : 'Co the nhap thu cong hoac dan ghi chu dai de AI tach giao dich.';
+
     return (
         <>
-            <div className="modal fade" id="addModal" tabIndex="-1" ref={modalRef}>
+            <div className="modal fade" id={modalId} tabIndex="-1" ref={modalRef}>
                 <div className="modal-dialog modal-lg modal-dialog-scrollable">
                     <div className="modal-content">
                         <div className="modal-header">
                             <div>
-                                <h5 className="modal-title mb-1">Thêm giao dịch</h5>
-                                <small className="text-muted">Có thể nhập thủ công hoặc dán ghi chú dài để AI tách giao dịch.</small>
+                                <h5 className="modal-title mb-1">{modalTitle}</h5>
+                                <small className="text-muted">{modalDescription}</small>
                             </div>
                             <button className="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
                         <div className="modal-body">
-                            <div className="quick-add-tabs mb-3">
-                                <button
-                                    type="button"
-                                    className={`quick-add-tab ${activeMode === 'manual' ? 'active' : ''}`}
-                                    onClick={() => setActiveMode('manual')}
-                                >
-                                    Thêm thủ công
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`quick-add-tab ${activeMode === 'quick' ? 'active' : ''}`}
-                                    onClick={() => setActiveMode('quick')}
-                                >
-                                    Thêm nhanh bằng văn bản
-                                </button>
-                            </div>
+                            {!isEditMode ? (
+                                <div className="quick-add-tabs mb-3">
+                                    <button
+                                        type="button"
+                                        className={`quick-add-tab ${activeMode === 'manual' ? 'active' : ''}`}
+                                        onClick={() => setActiveMode('manual')}
+                                    >
+                                        Them thu cong
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`quick-add-tab ${activeMode === 'quick' ? 'active' : ''}`}
+                                        onClick={() => setActiveMode('quick')}
+                                    >
+                                        Them nhanh bang van ban
+                                    </button>
+                                </div>
+                            ) : null}
 
                             {activeMode === 'manual' ? (
                                 <div>
                                     <div className="mb-3">
-                                        <label className="form-label">Loại</label>
+                                        <label className="form-label">Loai</label>
                                         <select
                                             className="form-select"
                                             name="tx_type"
                                             value={formData.tx_type}
                                             onChange={handleManualChange}
                                         >
-                                            <option value="expense">Chi tiêu</option>
-                                            <option value="income">Thu nhập</option>
+                                            <option value="expense">Chi tieu</option>
+                                            <option value="income">Thu nhap</option>
                                         </select>
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Số tiền</label>
+                                        <label className="form-label">So tien</label>
                                         <input
                                             type="number"
                                             className="form-control"
@@ -490,14 +568,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Ví</label>
+                                        <label className="form-label">Vi</label>
                                         <select
                                             className="form-select"
                                             name="wallet_id"
                                             value={formData.wallet_id}
                                             onChange={handleManualChange}
                                         >
-                                            <option value="">Chọn ví</option>
+                                            <option value="">Chon vi</option>
                                             {wallets.map((wallet) => (
                                                 <option key={wallet.wallet_id} value={wallet.wallet_id}>
                                                     {wallet.wallet_name}
@@ -507,14 +585,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Danh mục</label>
+                                        <label className="form-label">Danh muc</label>
                                         <select
                                             className="form-select"
                                             name="category_id"
                                             value={formData.category_id}
                                             onChange={handleManualChange}
                                         >
-                                            <option value="">Chọn danh mục</option>
+                                            <option value="">Chon danh muc</option>
                                             {getSelectableCategories(formData.tx_type).map((category) => (
                                                 <option key={category.category_id} value={category.category_id}>
                                                     {category.category_name}
@@ -527,11 +605,11 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                         className="btn btn-link quick-category-trigger px-0"
                                         onClick={() => openCategoryCreator({ kind: 'manual' })}
                                     >
-                                        Không có danh mục phù hợp? Tạo mới
+                                        Khong co danh muc phu hop? Tao moi
                                     </button>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Ngày</label>
+                                        <label className="form-label">Ngay</label>
                                         <input
                                             type="date"
                                             className="form-control"
@@ -542,7 +620,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Ghi chú</label>
+                                        <label className="form-label">Ghi chu</label>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -555,15 +633,15 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                             ) : (
                                 <div>
                                     <div className="quick-add-callout mb-3">
-                                        <div className="fw-semibold mb-1">Ví dụ</div>
+                                        <div className="fw-semibold mb-1">Vi du</div>
                                         <div className="text-muted">
-                                            uống Phúc Long hết 65k, ăn mì cay hết 79k, mua áo hết 100k
+                                            uong Phuc Long het 65k, an mi cay het 79k, mua ao het 100k
                                         </div>
                                     </div>
 
                                     <div className="row g-3">
                                         <div className="col-md-6">
-                                            <label className="form-label">Ngày áp dụng</label>
+                                            <label className="form-label">Ngay ap dung</label>
                                             <input
                                                 type="date"
                                                 className="form-control"
@@ -573,14 +651,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                             />
                                         </div>
                                         <div className="col-md-6">
-                                            <label className="form-label">Ví áp dụng</label>
+                                            <label className="form-label">Vi ap dung</label>
                                             <select
                                                 className="form-select"
                                                 name="wallet_id"
                                                 value={quickForm.wallet_id}
                                                 onChange={handleQuickChange}
                                             >
-                                                <option value="">Chọn ví</option>
+                                                <option value="">Chon vi</option>
                                                 {wallets.map((wallet) => (
                                                     <option key={wallet.wallet_id} value={wallet.wallet_id}>
                                                         {wallet.wallet_name}
@@ -591,19 +669,19 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     </div>
 
                                     <div className="mt-3">
-                                        <label className="form-label">Nội dung giao dịch</label>
+                                        <label className="form-label">Noi dung giao dich</label>
                                         <textarea
                                             className="form-control quick-add-textarea"
                                             name="raw_text"
                                             value={quickForm.raw_text}
                                             onChange={handleQuickChange}
-                                            placeholder="Dán ghi chú dài vào đây, mỗi giao dịch có thể ngăn cách bằng dấu phẩy, dấu chấm phẩy hoặc xuống dòng."
+                                            placeholder="Dan ghi chu dai vao day, moi giao dich co the ngan cach bang dau phay, dau cham phay hoac xuong dong."
                                         />
                                     </div>
 
                                     <div className="d-flex justify-content-between align-items-center mt-3 gap-3 flex-wrap">
                                         <small className="text-muted">
-                                            AI sẽ cố gắng đoán loại giao dịch và danh mục từ danh mục hiện có.
+                                            AI se co gang doan loai giao dich va danh muc tu danh muc hien co.
                                         </small>
                                         <button
                                             type="button"
@@ -611,7 +689,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                             onClick={handleQuickParse}
                                             disabled={isParsing}
                                         >
-                                            {isParsing ? 'Đang phân tích...' : 'Phân tích bằng AI'}
+                                            {isParsing ? 'Dang phan tich...' : 'Phan tich bang AI'}
                                         </button>
                                     </div>
 
@@ -628,57 +706,57 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     {previewTransactions.length > 0 ? (
                                         <div className="quick-preview mt-4">
                                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <h6 className="mb-0">Xem trước giao dịch</h6>
-                                                <span className="badge text-bg-secondary">{previewTransactions.length} dòng</span>
+                                                <h6 className="mb-0">Xem truoc giao dich</h6>
+                                                <span className="badge text-bg-secondary">{previewTransactions.length} dong</span>
                                             </div>
 
-                                            {previewTransactions.map((transaction, index) => (
-                                                <div key={`${transaction.note}-${index}`} className="quick-preview-row">
+                                            {previewTransactions.map((item, index) => (
+                                                <div key={`${item.note}-${index}`} className="quick-preview-row">
                                                     <div className="row g-2">
                                                         <div className="col-12">
-                                                            <label className="form-label small mb-1">Ghi chú</label>
+                                                            <label className="form-label small mb-1">Ghi chu</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
-                                                                value={transaction.note}
+                                                                value={item.note}
                                                                 onChange={(event) => handlePreviewChange(index, 'note', event.target.value)}
                                                             />
                                                         </div>
                                                         <div className="col-md-3">
-                                                            <label className="form-label small mb-1">Số tiền</label>
+                                                            <label className="form-label small mb-1">So tien</label>
                                                             <input
                                                                 type="number"
                                                                 className="form-control"
-                                                                value={transaction.amount}
+                                                                value={item.amount}
                                                                 onChange={(event) => handlePreviewChange(index, 'amount', event.target.value)}
                                                             />
                                                         </div>
                                                         <div className="col-md-3">
-                                                            <label className="form-label small mb-1">Loại</label>
+                                                            <label className="form-label small mb-1">Loai</label>
                                                             <select
                                                                 className="form-select"
-                                                                value={transaction.tx_type}
+                                                                value={item.tx_type}
                                                                 onChange={(event) => handlePreviewChange(index, 'tx_type', event.target.value)}
                                                             >
-                                                                <option value="expense">Chi tiêu</option>
-                                                                <option value="income">Thu nhập</option>
+                                                                <option value="expense">Chi tieu</option>
+                                                                <option value="income">Thu nhap</option>
                                                             </select>
                                                         </div>
                                                         <div className="col-md-4">
-                                                            <label className="form-label small mb-1">Danh mục</label>
+                                                            <label className="form-label small mb-1">Danh muc</label>
                                                             <select
                                                                 className="form-select"
-                                                                value={transaction.category_id}
+                                                                value={item.category_id}
                                                                 onChange={(event) => {
                                                                     const category = categoryOptions.find(
-                                                                        (item) => String(item.category_id) === event.target.value
+                                                                        (candidate) => String(candidate.category_id) === event.target.value
                                                                     );
                                                                     handlePreviewChange(index, 'category_id', event.target.value);
                                                                     handlePreviewChange(index, 'category_name', category?.category_name || '');
                                                                 }}
                                                             >
-                                                                <option value="">Chọn danh mục</option>
-                                                                {getSelectableCategories(transaction.tx_type).map((category) => (
+                                                                <option value="">Chon danh muc</option>
+                                                                {getSelectableCategories(item.tx_type).map((category) => (
                                                                     <option key={category.category_id} value={category.category_id}>
                                                                         {category.category_name}
                                                                     </option>
@@ -689,13 +767,13 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                                                 className="btn btn-link quick-category-trigger px-0 mt-1"
                                                                 onClick={() => openCategoryCreator({ kind: 'quick-preview', index })}
                                                             >
-                                                                Tạo danh mục mới cho dòng này
+                                                                Tao danh muc moi cho dong nay
                                                             </button>
                                                         </div>
                                                         <div className="col-md-2">
-                                                            <label className="form-label small mb-1">Độ tin cậy</label>
+                                                            <label className="form-label small mb-1">Do tin cay</label>
                                                             <div className="quick-preview-confidence">
-                                                                {Math.round(transaction.confidence * 100)}%
+                                                                {Math.round(item.confidence * 100)}%
                                                             </div>
                                                         </div>
                                                     </div>
@@ -721,7 +799,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     onClick={handleManualSubmit}
                                     disabled={isSavingManual}
                                 >
-                                    {isSavingManual ? 'Đang lưu...' : 'Lưu'}
+                                    {isSavingManual ? 'Dang luu...' : isEditMode ? 'Cap nhat' : 'Luu'}
                                 </button>
                             ) : (
                                 <button
@@ -729,7 +807,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                     onClick={handleQuickSubmit}
                                     disabled={isSavingQuick || previewTransactions.length === 0}
                                 >
-                                    {isSavingQuick ? 'Đang lưu...' : 'Lưu danh sách giao dịch'}
+                                    {isSavingQuick ? 'Dang luu...' : 'Luu danh sach giao dich'}
                                 </button>
                             )}
                         </div>
@@ -737,14 +815,14 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                 </div>
             </div>
 
-            <div className="modal fade" id="createCategoryModal" tabIndex="-1" ref={categoryModalRef}>
+            <div className="modal fade" id={categoryModalId} tabIndex="-1" ref={categoryModalRef}>
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
                             <div>
-                                <h5 className="modal-title mb-1">Tạo danh mục mới</h5>
+                                <h5 className="modal-title mb-1">Tao danh muc moi</h5>
                                 <small className="text-muted">
-                                    Áp dụng cho: {CATEGORY_TYPE_LABELS[categoryForm.txType] || 'Chi tiêu'}
+                                    Ap dung cho: {CATEGORY_TYPE_LABELS[categoryForm.txType] || 'Chi tieu'}
                                 </small>
                             </div>
                             <button
@@ -757,7 +835,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
 
                         <div className="modal-body">
                             <div className="mb-3">
-                                <label className="form-label">Tên danh mục</label>
+                                <label className="form-label">Ten danh muc</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -766,13 +844,13 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                         ...prev,
                                         name: event.target.value
                                     }))}
-                                    placeholder="Ví dụ: Cafe, Quà tặng, Chăm sóc thú cưng"
+                                    placeholder="Vi du: Cafe, Qua tang, Cham soc thu cung"
                                     autoFocus
                                 />
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Loại danh mục</label>
+                                <label className="form-label">Loai danh muc</label>
                                 <select
                                     className="form-select"
                                     value={categoryForm.txType}
@@ -781,8 +859,8 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                         txType: event.target.value
                                     }))}
                                 >
-                                    <option value="expense">Chi tiêu</option>
-                                    <option value="income">Thu nhập</option>
+                                    <option value="expense">Chi tieu</option>
+                                    <option value="income">Thu nhap</option>
                                 </select>
                             </div>
 
@@ -807,7 +885,7 @@ const AddTransactionModal = ({ wallets, categories, onTransactionsCreated, onCat
                                 onClick={handleCreateCategory}
                                 disabled={isCreatingCategory}
                             >
-                                {isCreatingCategory ? 'Đang tạo...' : 'Tạo và chọn'}
+                                {isCreatingCategory ? 'Dang tao...' : 'Tao va chon'}
                             </button>
                         </div>
                     </div>

@@ -22,25 +22,23 @@ const formatDateDDMMYYYY = (value) => {
     return date.toLocaleDateString('vi-VN');
 };
 
-const TransactionList = ({ transactions }) => {
+const TransactionList = ({ transactions, onEdit, onDelete, deletingId }) => {
     if (!transactions || transactions.length === 0) {
-        return <div className="text-muted">Chưa có giao dịch nào</div>;
+        return <div className="text-muted">Chua co giao dich nao</div>;
     }
 
     return (
         <div className="transaction-grid">
-            {/* header */}
             <div className="transaction-grid-header">
-                <div>Ghi chú</div>
-                <div>Ngày</div>
-                <div>Danh mục</div>
-                <div>Ví</div>
-                <div>Số tiền</div>
+                <div>Ghi chu</div>
+                <div>Ngay</div>
+                <div>Danh muc</div>
+                <div>Vi</div>
+                <div>So tien</div>
                 <div>#</div>
             </div>
 
-            {/* rows */}
-            {transactions.map(tx => {
+            {transactions.map((tx) => {
                 const amountValue = formatCompactVnd(Math.abs(Number(tx.amount)));
 
                 return (
@@ -69,11 +67,20 @@ const TransactionList = ({ transactions }) => {
                         </div>
 
                         <div className="text-end">
-                            <button className="btn btn-outline-primary btn-sm">
-                                Sửa
+                            <button
+                                className="btn btn-outline-primary btn-sm"
+                                type="button"
+                                onClick={() => onEdit?.(tx)}
+                            >
+                                Sua
                             </button>
-                            <button className="btn btn-outline-danger btn-sm ms-2">
-                                Xóa
+                            <button
+                                className="btn btn-outline-danger btn-sm ms-2"
+                                type="button"
+                                onClick={() => onDelete?.(tx)}
+                                disabled={deletingId === tx.trans_id}
+                            >
+                                {deletingId === tx.trans_id ? 'Dang xoa...' : 'Xoa'}
                             </button>
                         </div>
                     </div>
