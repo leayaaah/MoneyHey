@@ -9,6 +9,7 @@ const Sidebar = ({ open }) => {
         { id: 'transactions', label: 'Transactions', icon: 'receipt_long' },
         { id: 'reports', label: 'Reports', icon: 'bar_chart' },
         { id: 'budget', label: 'Budget', icon: 'account_balance_wallet' },
+        { id: 'profile', label: 'Profile', icon: 'person' },
         { id: 'settings', label: 'Settings', icon: 'settings' },
     ];
     const routes = {
@@ -16,6 +17,7 @@ const Sidebar = ({ open }) => {
         transactions: '/transactions',
         reports: '/reports',
         budget: '/budget',
+        profile: '/profile',
         settings: '/settings',
     };
 

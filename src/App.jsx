@@ -10,6 +10,7 @@ import ProtectedRoute from './presentation/components/auth/ProtectedRoute'
 import ReportPage from './presentation/pages/ReportPage'
 import SettingsPage from './presentation/pages/SettingsPage'
 import BudgetPage from './presentation/pages/BudgetPage'
+import ProfilePage from './presentation/pages/ProfilePage'
 
 import './App.css'
 
@@ -46,6 +47,7 @@ function App() {
         <Route path='/reports' element={<ReportPage onLogout={logout} />} />
         <Route path='/settings' element={<SettingsPage onLogout={logout} />} />
         <Route path='/budget' element={<BudgetPage onLogout={logout} />} />
+        <Route path='/profile' element={<ProfilePage onLogout={logout} />} />
       </Route>
 
       <Route path='/' 

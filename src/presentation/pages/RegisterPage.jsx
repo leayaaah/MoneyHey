@@ -17,7 +17,7 @@ const RegisterPage = () => {
                     <div className="row justify-content-center">
                         <div className="col-12 col-xl-10">
 
-                            <div className="register-card bg-white d-flex flex-column flex-md-row">
+                            <div className="register-card auth-surface d-flex flex-column flex-md-row">
 
                                 <div className="col-md-6 emerald-gradient d-none d-md-flex flex-column justify-content-center align-items-center text-center p-5 position-relative text-white">
                                     <div className="position-absolute top-0 start-0 p-5 opacity-25">
@@ -43,7 +43,7 @@ const RegisterPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="col-md-6 d-flex align-items-center bg-white">
+                                <div className="col-md-6 d-flex align-items-center auth-surface">
                                     <RegisterForm />
                                 </div>
 
