@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const navigate = useNavigate();
     return (
-        <div className="min-vh-100 d-flex flex-column">
+        <div className="min-vh-100 d-flex bg-dark text-white flex-column ">
             <LoginHeader />
             
             <main className="flex-grow-1 d-flex align-items-center justify-content-center p-3 pt-5 mt-4">

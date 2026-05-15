@@ -55,7 +55,7 @@ const Header = ({ onToggleSidebar, onLogout }) => {
                             }
                         </div>
 
-                        <span className="d-none d-md-block small fw-semibold">
+                        <span className="d-none d-md-block small fw-semibold text-secondary">
                             {user?.name || 'User'}
                         </span>
                     </button>
