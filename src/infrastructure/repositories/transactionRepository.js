@@ -52,6 +52,7 @@ export const getTransactionsByType = async(type, userId) => {
         categories ( category_name ),
         wallets ( wallet_name )`)
         .eq('tx_type', type)
+        .order('tx_date', { ascending: false })
 
     if (userId) {
         query = query.eq('user_id', userId)

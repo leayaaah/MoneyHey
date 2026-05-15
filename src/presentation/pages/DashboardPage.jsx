@@ -16,9 +16,15 @@ const getMonthStart = (date) => new Date(date.getFullYear(), date.getMonth(), 1)
 const toNumber = (value) => Number(value || 0);
 const toPercentChange = (current, previous) => {
     if (previous === 0) {
-        return current === 0 ? 0 : 100;
+        return current === 0 ? 0 : null;
     }
-    return Math.round((Math.abs(current - previous) / Math.abs(previous)) * 100);
+    return Math.round(((current - previous) / Math.abs(previous)) * 100);
+};
+const toPercentText = (percentChange) => {
+    if (percentChange === null) {
+        return '∞';
+    }
+    return `${Math.abs(percentChange)}%`;
 };
 
 const DashboardPage = ({ onLogout }) => {
@@ -72,13 +78,19 @@ const DashboardPage = ({ onLogout }) => {
                 const previousExpense = calcByType(previousMonthTxs, 'expense');
                 const currentNet = currentIncome - currentExpense;
                 const previousNet = previousIncome - previousExpense;
+                const estimatedPreviousBalance = total - currentNet;
+
+                const incomeChange = toPercentChange(currentIncome, previousIncome);
+                const expenseChange = toPercentChange(currentExpense, previousExpense);
+                const netChange = toPercentChange(currentNet, previousNet);
+                const balanceChange = toPercentChange(total, estimatedPreviousBalance);
 
                 setSummaryCards([
                     {
                         id: 'income',
                         label: 'Thu tháng này',
                         value: formatCompactVnd(currentIncome, { showSign: true }),
-                        change: `${toPercentChange(currentIncome, previousIncome)}%`,
+                        change: toPercentText(incomeChange),
                         positive: currentIncome >= previousIncome,
                         icon: 'trending_up',
                         color: 'card-emerald',
@@ -87,7 +99,7 @@ const DashboardPage = ({ onLogout }) => {
                         id: 'expense',
                         label: 'Chi tháng này',
                         value: `-${formatCompactVnd(currentExpense)}`,
-                        change: `${toPercentChange(currentExpense, previousExpense)}%`,
+                        change: toPercentText(expenseChange),
                         positive: currentExpense <= previousExpense,
                         icon: 'trending_down',
                         color: 'card-red',
@@ -96,7 +108,7 @@ const DashboardPage = ({ onLogout }) => {
                         id: 'net',
                         label: 'Dòng tiền ròng',
                         value: formatCompactVnd(currentNet, { showSign: true }),
-                        change: `${toPercentChange(currentNet, previousNet)}%`,
+                        change: toPercentText(netChange),
                         positive: currentNet >= previousNet,
                         icon: 'query_stats',
                         color: 'card-blue',
@@ -105,11 +117,10 @@ const DashboardPage = ({ onLogout }) => {
                         id: 'balance',
                         label: 'Tổng số dư',
                         value: formatCompactVnd(total),
-                        change: `${currentMonthTxs.length} giao dịch`,
+                        change: toPercentText(balanceChange),
                         positive: total >= 0,
                         icon: 'account_balance_wallet',
                         color: 'card-amber',
-                        changeSuffix: 'trong tháng này',
                     },
                 ]);
 
