@@ -170,3 +170,7 @@ h1, h2, .font-headline {
 [data-theme='dark'] .text-muted {
     color: var(--text-variant) !important;
 }
+
+.auth-surface {
+    background: var(--surface-card);
+}

@@ -16,9 +16,9 @@ const LoginPage = () => {
                     <div className="row justify-content-center">
                         <div className="col-12 col-xl-10">
 
-                            <div className="login-card bg-white d-flex flex-column flex-md-row">
+                            <div className="login-card auth-surface d-flex flex-column flex-md-row">
 
-                                <div className="col-md-6 d-flex align-items-center bg-white">
+                                <div className="col-md-6 d-flex align-items-center auth-surface">
                                     <LoginForm />
                                 </div>
 
