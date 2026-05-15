@@ -14,6 +14,12 @@ const DEFAULT_SETTINGS = {
     autoBackup: true,
 };
 
+const normalizeSettings = (settings = {}) => ({
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    currency: 'VND',
+});
+
 const getInitialSettings = () => {
     if (typeof window === 'undefined') {
         return DEFAULT_SETTINGS;
@@ -24,7 +30,7 @@ const getInitialSettings = () => {
     }
     try {
         const parsed = JSON.parse(stored);
-        return { ...DEFAULT_SETTINGS, ...parsed };
+        return normalizeSettings(parsed);
     } catch (error) {
         console.warn('Không thể đọc cài đặt đã lưu:', error);
         return DEFAULT_SETTINGS;
@@ -45,7 +51,10 @@ const SettingsPage = ({ onLogout }) => {
     }, [settings]);
 
     const updateSetting = (key, value) => {
-        setSettings(prev => ({ ...prev, [key]: value }));
+        setSettings(prev => ({
+            ...prev,
+            [key]: key === 'currency' ? 'VND' : value,
+        }));
     };
 
     const handleReset = () => {
@@ -191,9 +200,7 @@ const SettingsPage = ({ onLogout }) => {
                                     value={settings.currency}
                                     onChange={(event) => updateSetting('currency', event.target.value)}
                                 >
-                                    <option value="VND">VND (₫)</option>
-                                    <option value="USD">USD ($)</option>
-                                    <option value="EUR">EUR (€)</option>
+                                    <option value="VND">VND (đ)</option>
                                 </select>
                             </div>
 
@@ -262,3 +269,4 @@ const SettingsPage = ({ onLogout }) => {
 };
 
 export default SettingsPage;
+

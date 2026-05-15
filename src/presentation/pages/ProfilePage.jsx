@@ -18,6 +18,12 @@ const DEFAULT_SETTINGS = {
     notifications: true,
 };
 
+const normalizeSettings = (settings = {}) => ({
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    currency: 'VND',
+});
+
 const getStoredSettings = () => {
     if (typeof window === 'undefined') {
         return DEFAULT_SETTINGS;
@@ -43,9 +49,9 @@ const CURRENCY_LABELS = {
     EUR: '€',
 };
 
-const formatBalance = (value, currency) => {
+const formatBalance = (value) => {
     const numericValue = Number(value || 0);
-    const suffix = CURRENCY_LABELS[currency] || currency;
+    const suffix = CURRENCY_LABELS.VND;
     return `${numericValue.toLocaleString('vi-VN')} ${suffix}`;
 };
 
@@ -65,7 +71,7 @@ const ProfilePage = ({ onLogout }) => {
     const [walletActionMessage, setWalletActionMessage] = useState('');
     const [isSavingWallet, setIsSavingWallet] = useState(false);
     const [deletingWalletId, setDeletingWalletId] = useState(null);
-    const [settings] = useState(getStoredSettings);
+    const [settings] = useState(() => normalizeSettings(getStoredSettings()));
     const { user } = useAuth();
     const userId = user?.user_id;
 
