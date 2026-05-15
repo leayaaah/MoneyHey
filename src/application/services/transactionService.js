@@ -2,9 +2,9 @@ import { addTransaction, getTransactions } from "../../infrastructure/repositori
 import { mapTransactionsWithRelations } from "../../domain/transactions/transactionMapper";
 import { validateTransaction } from "../../domain/transactions/transactionRules";
 
-export const fetchTransactions = async () => {
+export const fetchTransactions = async (userId) => {
     try {
-        const transactions = await getTransactions();
+        const transactions = await getTransactions(userId);
         return mapTransactionsWithRelations(transactions);
     } catch (error) {
         console.error('Error fetching transactions:', error);

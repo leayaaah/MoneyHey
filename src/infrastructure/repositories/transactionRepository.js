@@ -1,10 +1,17 @@
 import { supabase } from '../supabaseClient'
-export const getTransactions = async () => {
-    const { data, error } = await supabase
+export const getTransactions = async (userId) => {
+    let query = supabase
         .from('transactions')
         .select(`*,
         categories ( category_name ),
         wallets ( wallet_name )`)
+        .order('tx_date', { ascending: false })
+
+    if (userId) {
+        query = query.eq('user_id', userId)
+    }
+
+    const { data, error } = await query
     if (error) {
         console.error('Error fetching transactions:', error)
         throw error

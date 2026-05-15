@@ -201,6 +201,12 @@
     font-weight: 600;
 }
 
+.summary-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-variant);
+    font-weight: 600;
+}
+
 .change-up   { color: var(--emerald-primary); }
 .change-down { color: #e74c3c; }
 
