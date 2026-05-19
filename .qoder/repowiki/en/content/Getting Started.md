@@ -5,6 +5,7 @@
 - [README.md](file://README.md)
 - [package.json](file://package.json)
 - [vite.config.js](file://vite.config.js)
+- [index.html](file://index.html)
 - [supabase.js](file://MoneyHey/src/config/supabase.js)
 - [supabaseClient.js](file://src/infrastructure/supabaseClient.js)
 - [transactionService.js](file://src/application/services/transactionService.js)
@@ -14,6 +15,12 @@
 - [TransactionPage.jsx](file://src/presentation/pages/TransactionPage.jsx)
 - [App.jsx](file://src/App.jsx)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Enhanced HTML meta tags with Vietnamese localization for improved SEO and cultural appropriateness
+- Added culturally appropriate title and comprehensive meta description explaining application purpose in Vietnamese
+- Updated environment configuration section to reflect Vietnamese language support
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -28,7 +35,9 @@
 10. [Conclusion](#conclusion)
 
 ## Introduction
-MoneyHey is a React-based personal finance application that helps you track income and expenses, categorize transactions, and gain insights through charts and reports. It integrates with Supabase for authentication and data persistence, and optionally uses AI providers (OpenAI or Gemini) to quickly parse free-form notes into structured transactions.
+MoneyHey is a React-based personal finance application that helps you track income and expenses, categorize transactions, and gain insights through charts and reports. The application features enhanced Vietnamese localization with culturally appropriate terminology and comprehensive SEO meta tags for improved discoverability. It integrates with Supabase for authentication and data persistence, and optionally uses AI providers (OpenAI or Gemini) to quickly parse free-form notes into structured transactions.
+
+**Updated** Enhanced with Vietnamese localization and improved SEO meta tags for better cultural appropriateness and search engine visibility.
 
 ## Project Structure
 The project follows a layered architecture:
@@ -89,6 +98,7 @@ Before installing MoneyHey, ensure your development environment meets the follow
 Notes:
 - The project uses Vite for the build toolchain and React for the UI framework.
 - Environment variables are loaded via Vite's import.meta.env mechanism.
+- The application supports Vietnamese language localization with culturally appropriate terminology.
 
 **Section sources**
 - [package.json:1-35](file://package.json#L1-L35)
@@ -112,6 +122,7 @@ Follow these steps to install and run MoneyHey locally:
 Verification:
 - Confirm the development server starts without errors.
 - Open the browser and verify the login page loads.
+- Check that the Vietnamese title and meta description appear in the browser tab and SEO metadata.
 
 **Section sources**
 - [package.json:6-11](file://package.json#L6-L11)
@@ -135,11 +146,24 @@ Notes:
 - Defaults:
   - OpenAI: gpt-5.4-nano
   - Gemini: gemini-2.5-flash
+- The application supports Vietnamese language settings with currency localization (VND).
 
 **Section sources**
 - [README.md:22-40](file://README.md#L22-L40)
 - [transactionAiRepository.js:110-145](file://src/infrastructure/repositories/transactionAiRepository.js#L110-L145)
 - [transactionIntelligenceService.js:139-179](file://src/application/services/transactionIntelligenceService.js#L139-L179)
+
+### Enhanced HTML Meta Tags and Vietnamese Localization
+The application features comprehensive Vietnamese localization with culturally appropriate SEO meta tags:
+
+- **Title**: "Money Hey - Ứng dụng quản lí tài chính cá nhân" (Money Hey - Personal Financial Management Application)
+- **Meta Description**: Comprehensive Vietnamese description explaining the application's purpose and benefits
+- **Cultural Appropriateness**: Uses Vietnamese terminology that resonates with local users ("ứng dụng quản lí tài chính cá nhân", "theo dõi thu chi")
+
+These enhancements improve SEO performance and cultural appropriateness for Vietnamese-speaking users while maintaining international accessibility.
+
+**Section sources**
+- [index.html:6-10](file://index.html#L6-L10)
 
 ### Supabase Configuration
 - Authentication and session persistence are configured in the Supabase client.
@@ -210,6 +234,9 @@ After completing installation and environment configuration, verify the setup:
 3. Supabase integration
    - Log in to the application to confirm authentication works.
    - Check that protected routes redirect appropriately when logged in or out.
+4. Vietnamese localization
+   - Verify the browser tab displays the Vietnamese title "Money Hey - Ứng dụng quản lí tài chính cá nhân"
+   - Confirm the meta description appears in SEO tools and social media previews.
 
 **Section sources**
 - [TransactionPage.jsx:1-330](file://src/presentation/pages/TransactionPage.jsx#L1-L330)
@@ -241,8 +268,12 @@ Recommended workflow:
   - Use the "Add quick by text" mode.
   - Paste a multi-line note with multiple expenses/income entries.
   - Review the parsed preview and save.
+- Vietnamese language support
+  - Access language settings in the application.
+  - Switch between Vietnamese (Tiếng Việt) and English (English) as needed.
+  - Currency display defaults to VND (đ) for Vietnamese locale.
 
-Note: The AI parser normalizes amounts (e.g., 65k → 65000) and infers categories and types based on keywords and provided categories.
+Note: The AI parser normalizes amounts (e.g., 65k → 65000) and infers categories and types based on keywords and provided categories. The application maintains cultural appropriateness in both UI and AI parsing responses.
 
 **Section sources**
 - [AddTransactionModal.jsx:434-512](file://src/presentation/components/transaction/AddTransactionModal.jsx#L434-L512)
@@ -266,6 +297,9 @@ Common setup issues and resolutions:
 - Port conflicts
   - Symptom: Development server fails to start on port 5173.
   - Resolution: Stop other processes using the port or configure Vite to use a different port.
+- Vietnamese localization issues
+  - Symptom: Title or meta description not displaying correctly.
+  - Resolution: Verify the HTML meta tags in index.html contain Vietnamese content. Ensure the browser tab shows "Money Hey - Ứng dụng quản lí tài chính cá nhân".
 
 **Section sources**
 - [README.md:22-40](file://README.md#L22-L40)
@@ -275,4 +309,4 @@ Common setup issues and resolutions:
 - [transactionIntelligenceService.js:155-168](file://src/application/services/transactionIntelligenceService.js#L155-L168)
 
 ## Conclusion
-You are now ready to use MoneyHey for managing personal finances. Start by configuring environment variables, verifying the development server, and testing the AI transaction parsing feature. For production deployments, ensure sensitive API keys are handled securely and consider using a backend or edge function to proxy AI requests.
+You are now ready to use MoneyHey for managing personal finances. Start by configuring environment variables, verifying the development server, and testing the AI transaction parsing feature. The enhanced Vietnamese localization provides improved cultural appropriateness and SEO performance for Vietnamese-speaking users. For production deployments, ensure sensitive API keys are handled securely and consider using a backend or edge function to proxy AI requests.

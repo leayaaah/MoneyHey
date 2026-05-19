@@ -227,9 +227,92 @@
     color: var(--text-variant);
 }
 
+/* ─── Budget item date ────────────────────────────────────── */
+.budget-item-date {
+    margin: 0.125rem 0 0;
+    font-size: 0.75rem;
+    color: var(--text-variant);
+}
+
+/* ─── Budget item actions ─────────────────────────────────── */
+.budget-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.budget-item-btn-group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.budget-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    border-radius: 0.5rem;
+    color: var(--text-variant);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.budget-action-btn:hover {
+    background: var(--surface-muted);
+    color: var(--text-main);
+}
+
+.budget-action-btn.danger:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.budget-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.budget-action-btn .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* ─── Progress bar variants ───────────────────────────────── */
+.budget-progress-bar.warning {
+    background: linear-gradient(90deg, #e67e22, #f39c12);
+}
+
+.budget-progress-bar.danger {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+/* ─── Empty state ─────────────────────────────────────────── */
+.budget-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--text-variant);
+}
+
+.budget-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 @media screen and (max-width: 767px) {
     .budget-item-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .budget-item-actions {
+        width: 100%;
+        justify-content: space-between;
     }
 }
